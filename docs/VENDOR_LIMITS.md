@@ -62,6 +62,21 @@ rebel.compile_from_torch(mod, input_info=..., example_inputs=..., compile_contex
 
 ---
 
+## 9. `output_hidden_states=True` 는 37개를 전부 내보냄 — **우회 가능**
+
+벤더 래퍼가 `return logits, all_hidden_states` 로 embedding + 전 레이어를 호스트로
+복사합니다. 필요한 것만 고르는 옵션이 없습니다.
+
+래퍼를 한 겹 더 감싸 원하는 인덱스만 반환하고, 런타임에 넘기는 `config` 의
+`num_hidden_layers` 를 잘린 개수 - 1 로 맞추면 됩니다 (`_prepare_prefill_outputs` 가
+`config.num_hidden_layers + 1` 개 버퍼를 잡습니다).
+
+**비용은 바이트가 아니라 텐서 개수입니다.** 37 → 6 으로 줄였을 때 절감이
+verify(3.2 MB) 5.4 ms, prefill(97 MB) 5.1 ms 로 거의 같았습니다 —
+출력 텐서 하나당 약 0.17 ms 의 고정 비용이 붙습니다.
+
+---
+
 ## 가장 위험한 부류 — 에러 없이 틀린 답
 
 제약 자체보다 이게 더 위험했습니다.
@@ -71,6 +86,12 @@ rebel.compile_from_torch(mod, input_info=..., example_inputs=..., compile_contex
 | `cos 0.57` | Append PAGED 호출에서 `q_len != k_len` |
 | 캐시가 매번 재업로드 | `compile_from_torch` 인자 3종 미충족 |
 | 토큰 id 0 무한 출력 | int4/int8 캘리브레이션 부재 |
+| 드래프터에 엉뚱한 레이어 주입 | `extract_context_feature` 의 offset=1 을 빠뜨림 |
 
 전부 예외가 안 납니다. **수치 등가 검증을 매 단계 넣어야 합니다.**
 [checks/](../checks/) 의 스크립트들이 그 용도입니다.
+
+그리고 검증 자체가 틀릴 수 있습니다. 마지막 항목은 제가 잘못된 인덱스로 그래프를
+자른 건데, 검증 스크립트가 기준과 대상에 **똑같이 틀린 인덱스**를 써서 `cos 1.000018`
+로 통과했습니다. **기준은 독립적으로 만들어야 합니다** — 원본 코드가 실제로 읽는
+경로를 그대로 따라가야지, 같은 상수를 양쪽에 재사용하면 안 됩니다.

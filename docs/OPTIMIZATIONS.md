@@ -1,4 +1,4 @@
-# 최적화 4가지 — 상세
+# 최적화 5가지 — 상세
 
 각 단계는 앞 단계의 하네스를 패치해서 만들었습니다. 패치 스크립트가
 [generators/](../generators/) 에 있으므로 단계 간 diff 를 그대로 볼 수 있습니다.
@@ -8,6 +8,7 @@ bench2.py                (원본, stateless)
   └ mk_sf_paper.py  →  bench_sf_paper.py   ① 드래프터 KV 캐시
       └ mk_ua.py     →  bench_sf_ua.py     ② 비정렬 재개
           └ mk_dual_bench.py → bench_sf_dual.py  ③④ 이중 그래프
+              └ mk_slim_bench.py → bench_sf_slim.py  ⑤ 출력 슬라이싱
 ```
 
 ---
@@ -160,6 +161,76 @@ DUAL[ch] = RBLNRuntimeModel(runtime=rebel.Runtime(cm, tensor_type="pt", device=D
 
 **검증.** 청크 256 으로 prefill → 청크 17 로 검증한 hidden state 가
 전부 청크 256 으로 처리한 기준과 `cos 0.999982`.
+
+---
+
+## ⑤ hidden state 출력 37개 → 6개
+
+**문제.** 벤더 래퍼는 `output_hidden_states=True` 일 때
+
+```python
+if self.rbln_config.output_hidden_states:
+    return logits, all_hidden_states     # 37개 = embedding + 36 layer
+```
+
+로 **37개를 전부 호스트로 내보냅니다.** 런타임도 `num_hidden_layers + 1` 개의
+출력 버퍼를 잡습니다.
+
+DFlash 가 실제로 쓰는 건 6개뿐입니다.
+
+| 용도 | 인덱스 |
+|---|---|
+| 드래프터 입력 (fc 12800→2560) | 2, 10, 18, 26, 34 |
+| lm_head 입력 (`hs[-1]`) | 36 |
+| (CMR 을 쓸 때만) `hs[-2]` | 35 |
+
+> ⚠️ `target_layer_ids = [1, 9, 17, 25, 33]` 이지만 `extract_context_feature` 가
+> **`hidden_states[layer_id + 1]`** 로 읽습니다 (offset=1). 실제 인덱스는
+> `[2, 10, 18, 26, 34]` 입니다. 처음에 offset 을 빠뜨리고 `[1,9,17,25,33]` 을
+> 잘라 컴파일했는데, 검증 스크립트가 양쪽에 똑같이 틀린 인덱스를 써서
+> `cos 1.000018` 로 통과했습니다. **비교 대상이 같은 실수를 공유하면 검증이 아닙니다.**
+
+**해결.** 래퍼를 한 겹 더 감싸서 필요한 것만 반환합니다.
+
+```python
+class SliceHS(nn.Module):
+    def __init__(self, m, keep):
+        super().__init__(); self.m = m; self._keep = keep
+
+    @property
+    def phase(self): return self.m.phase
+    @phase.setter
+    def phase(self, v): self.m.phase = v     # _compile_model 이 여기에 대입한다
+
+    def forward(self, *a):
+        logits, hs = self.m(*a)
+        return logits, tuple(hs[i] for i in self._keep)
+```
+
+런타임 쪽은 출력 버퍼 개수를 맞춰야 합니다. `_prepare_prefill_outputs` 가
+`config.num_hidden_layers + 1` 개를 잡으므로, 래퍼에 넘기는 config 만 복사해서
+`num_hidden_layers = 5` 로 둡니다 (`rbln_config` 는 건드리지 않습니다).
+
+```python
+wcfg = copy.deepcopy(mcfg); wcfg.num_hidden_layers = 5
+RBLNRuntimeModel(..., config=wcfg)
+```
+
+**효과.** 단독 측정 verify 42.7 → 37.3 ms, prefill(300토큰) 223.8 → 213.0 ms.
+파이프라인 전체로는 verify 41.2 → 38.8 ms, 라운드 62.3 → 59.5 ms.
+**tau·라운드 수·토큰 수가 이전 단계와 완전히 동일**했으므로 순수 속도 이득입니다.
+
+### 비용은 바이트가 아니라 텐서 개수였다
+
+절감량이 호출당 **verify 5.4 ms / prefill 5.1 ms 로 거의 같았습니다.** 두 호출은
+전송량이 15배 차이납니다 (3.2 MB vs 97 MB). 즉 대역폭이 아니라
+
+```
+31개 텐서 × 약 0.17 ms/개 = 약 5 ms   (호출당 고정)
+```
+
+**출력 텐서 하나당 붙는 고정 비용**이 지배적입니다. "37 → 6 이니 트래픽 8배 감소"
+라는 계산은 맞지 않고, 실제로 줄어든 건 **호스트 복사 호출 31번**입니다.
 
 ---
 
