@@ -1,0 +1,24 @@
+# 컴파일된 NPU 그래프 / 모델 가중치 (수 GB)
+*.rbln
+rbln-*/
+rbln_cache/
+Qwen3-*/
+dual_17_256/
+dual_graphs/
+
+# 데이터셋 / 로그 / 캐시
+dflash/
+*.jsonl
+*.log
+*.csv
+*.raw
+__pycache__/
+*.pyc
+
+# 접속 정보 — 절대 커밋 금지
+npu_connect.sh
+NPU_SERVER_ACCESS.md
+id_container*
+.npu_env
+*.pem
+*_rsa

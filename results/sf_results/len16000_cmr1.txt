@@ -1,0 +1,1 @@
+SF {"mode": "stateful", "cmr": 1, "inlen": 16000, "samples": 3, "tau": 2.01, "rounds": 384, "tokens": 772, "draft_ms": 8.0, "verify_ms": 109.0, "append_ms": 21.6, "score_ms": 35.3, "lmh_ms": 9.2, "prefill_s": 52.72, "retrievals": 97, "kept_mean": 1008.2, "decode_tok_s": 10.13, "wall_s": 128.9, "P_mean": 59.43, "E_J": 7660.8, "E_dyn_J": 3058.6, "T_max": 53.0, "T_mean": 50.2}
