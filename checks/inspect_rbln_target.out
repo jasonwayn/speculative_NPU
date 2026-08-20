@@ -1,0 +1,1788 @@
+OPTIMUM_RBLN_ROOT /usr/local/lib/python3.13/dist-packages/optimum/rbln
+REBEL_VERSION 0.10.2
+RBLN_CONFIG_PREPARED {'_attributes_map': {'cls_name': 'RBLNQwen3ForCausalLMConfig', '_dtype': 'float32', 'optimum_rbln_version': '0.10.2', '_compile_cfgs': [], 'batch_size': 1, 'max_seq_len': 4096, 'use_inputs_embeds': False, 'use_position_ids': False, 'use_attention_mask': False, 'quantization': {}, 'lora_config': None, 'attn_impl': None, 'kvcache_partition_len': None, 'kvcache_block_size': None, 'prefill_chunk_size': 256, 'kvcache_num_blocks': 0, 'cache_impl': 'static', 'sliding_window': None, 'sliding_window_layers': [], 'phases': ['prefill', 'decode'], 'logits_to_keep': 1, 'output_hidden_states': True, 'decoder_batch_sizes': [1], 'kvcache_metas': []}, '_frozen': False, 'cls_name': 'RBLNQwen3ForCausalLMConfig', '_runtime_options': {'create_runtimes': False, 'device': None, 'device_map': None, 'activate_profiler': None, 'timeout': None}, 'npu': None, 'tensor_parallel_size': None, '_dtype': 'float32', 'optimum_rbln_version': '0.10.2', '_compile_cfgs': [], 'batch_size': 1, 'max_seq_len': 4096, 'use_inputs_embeds': False, 'use_position_ids': False, 'use_attention_mask': False, 'quantization': {}, 'lora_config': None, 'attn_impl': None, 'kvcache_partition_len': None, 'kvcache_block_size': None, 'prefill_chunk_size': 256, 'kvcache_num_blocks': 0, 'cache_impl': 'static', 'sliding_window': None, 'sliding_window_layers': [], 'phases': ['prefill', 'decode'], 'logits_to_keep': 1, 'output_hidden_states': True, 'decoder_batch_sizes': [1], 'kvcache_metas': []}
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 147.04it/s]
+RBLN_CONFIG_UPDATED {'_attributes_map': {'cls_name': 'RBLNQwen3ForCausalLMConfig', '_dtype': 'float32', 'optimum_rbln_version': '0.10.2', '_compile_cfgs': [RBLNCompileConfig(compiled_model_name='prefill', input_info=[('input_ids', [1, 256], 'int64'), ('cache_position', [1, 256], 'int32'), ('block_tables', [1], 'int16'), ('query_position', [], 'int16'), ('past_key_values_0', [1, 8, 4096, 128], 'float32'), ('past_key_values_1', [1, 8, 4096, 128], 'float32'), ('past_key_values_2', [1, 8, 4096, 128], 'float32'), ('past_key_values_3', [1, 8, 4096, 128], 'float32'), ('past_key_values_4', [1, 8, 4096, 128], 'float32'), ('past_key_values_5', [1, 8, 4096, 128], 'float32'), ('past_key_values_6', [1, 8, 4096, 128], 'float32'), ('past_key_values_7', [1, 8, 4096, 128], 'float32'), ('past_key_values_8', [1, 8, 4096, 128], 'float32'), ('past_key_values_9', [1, 8, 4096, 128], 'float32'), ('past_key_values_10', [1, 8, 4096, 128], 'float32'), ('past_key_values_11', [1, 8, 4096, 128], 'float32'), ('past_key_values_12', [1, 8, 4096, 128], 'float32'), ('past_key_values_13', [1, 8, 4096, 128], 'float32'), ('past_key_values_14', [1, 8, 4096, 128], 'float32'), ('past_key_values_15', [1, 8, 4096, 128], 'float32'), ('past_key_values_16', [1, 8, 4096, 128], 'float32'), ('past_key_values_17', [1, 8, 4096, 128], 'float32'), ('past_key_values_18', [1, 8, 4096, 128], 'float32'), ('past_key_values_19', [1, 8, 4096, 128], 'float32'), ('past_key_values_20', [1, 8, 4096, 128], 'float32'), ('past_key_values_21', [1, 8, 4096, 128], 'float32'), ('past_key_values_22', [1, 8, 4096, 128], 'float32'), ('past_key_values_23', [1, 8, 4096, 128], 'float32'), ('past_key_values_24', [1, 8, 4096, 128], 'float32'), ('past_key_values_25', [1, 8, 4096, 128], 'float32'), ('past_key_values_26', [1, 8, 4096, 128], 'float32'), ('past_key_values_27', [1, 8, 4096, 128], 'float32'), ('past_key_values_28', [1, 8, 4096, 128], 'float32'), ('past_key_values_29', [1, 8, 4096, 128], 'float32'), ('past_key_values_30', [1, 8, 4096, 128], 'float32'), ('past_key_values_31', [1, 8, 4096, 128], 'float32'), ('past_key_values_32', [1, 8, 4096, 128], 'float32'), ('past_key_values_33', [1, 8, 4096, 128], 'float32'), ('past_key_values_34', [1, 8, 4096, 128], 'float32'), ('past_key_values_35', [1, 8, 4096, 128], 'float32'), ('past_key_values_36', [1, 8, 4096, 128], 'float32'), ('past_key_values_37', [1, 8, 4096, 128], 'float32'), ('past_key_values_38', [1, 8, 4096, 128], 'float32'), ('past_key_values_39', [1, 8, 4096, 128], 'float32'), ('past_key_values_40', [1, 8, 4096, 128], 'float32'), ('past_key_values_41', [1, 8, 4096, 128], 'float32'), ('past_key_values_42', [1, 8, 4096, 128], 'float32'), ('past_key_values_43', [1, 8, 4096, 128], 'float32'), ('past_key_values_44', [1, 8, 4096, 128], 'float32'), ('past_key_values_45', [1, 8, 4096, 128], 'float32'), ('past_key_values_46', [1, 8, 4096, 128], 'float32'), ('past_key_values_47', [1, 8, 4096, 128], 'float32'), ('past_key_values_48', [1, 8, 4096, 128], 'float32'), ('past_key_values_49', [1, 8, 4096, 128], 'float32'), ('past_key_values_50', [1, 8, 4096, 128], 'float32'), ('past_key_values_51', [1, 8, 4096, 128], 'float32'), ('past_key_values_52', [1, 8, 4096, 128], 'float32'), ('past_key_values_53', [1, 8, 4096, 128], 'float32'), ('past_key_values_54', [1, 8, 4096, 128], 'float32'), ('past_key_values_55', [1, 8, 4096, 128], 'float32'), ('past_key_values_56', [1, 8, 4096, 128], 'float32'), ('past_key_values_57', [1, 8, 4096, 128], 'float32'), ('past_key_values_58', [1, 8, 4096, 128], 'float32'), ('past_key_values_59', [1, 8, 4096, 128], 'float32'), ('past_key_values_60', [1, 8, 4096, 128], 'float32'), ('past_key_values_61', [1, 8, 4096, 128], 'float32'), ('past_key_values_62', [1, 8, 4096, 128], 'float32'), ('past_key_values_63', [1, 8, 4096, 128], 'float32'), ('past_key_values_64', [1, 8, 4096, 128], 'float32'), ('past_key_values_65', [1, 8, 4096, 128], 'float32'), ('past_key_values_66', [1, 8, 4096, 128], 'float32'), ('past_key_values_67', [1, 8, 4096, 128], 'float32'), ('past_key_values_68', [1, 8, 4096, 128], 'float32'), ('past_key_values_69', [1, 8, 4096, 128], 'float32'), ('past_key_values_70', [1, 8, 4096, 128], 'float32'), ('past_key_values_71', [1, 8, 4096, 128], 'float32')], npu=None, tensor_parallel_size=None), RBLNCompileConfig(compiled_model_name='decoder_batch_1', input_info=[('input_ids', [1, 1], 'int64'), ('cache_position', [1, 1], 'int32'), ('block_tables', [1, 1], 'int16'), ('past_key_values_0', [1, 8, 4096, 128], 'float32'), ('past_key_values_1', [1, 8, 4096, 128], 'float32'), ('past_key_values_2', [1, 8, 4096, 128], 'float32'), ('past_key_values_3', [1, 8, 4096, 128], 'float32'), ('past_key_values_4', [1, 8, 4096, 128], 'float32'), ('past_key_values_5', [1, 8, 4096, 128], 'float32'), ('past_key_values_6', [1, 8, 4096, 128], 'float32'), ('past_key_values_7', [1, 8, 4096, 128], 'float32'), ('past_key_values_8', [1, 8, 4096, 128], 'float32'), ('past_key_values_9', [1, 8, 4096, 128], 'float32'), ('past_key_values_10', [1, 8, 4096, 128], 'float32'), ('past_key_values_11', [1, 8, 4096, 128], 'float32'), ('past_key_values_12', [1, 8, 4096, 128], 'float32'), ('past_key_values_13', [1, 8, 4096, 128], 'float32'), ('past_key_values_14', [1, 8, 4096, 128], 'float32'), ('past_key_values_15', [1, 8, 4096, 128], 'float32'), ('past_key_values_16', [1, 8, 4096, 128], 'float32'), ('past_key_values_17', [1, 8, 4096, 128], 'float32'), ('past_key_values_18', [1, 8, 4096, 128], 'float32'), ('past_key_values_19', [1, 8, 4096, 128], 'float32'), ('past_key_values_20', [1, 8, 4096, 128], 'float32'), ('past_key_values_21', [1, 8, 4096, 128], 'float32'), ('past_key_values_22', [1, 8, 4096, 128], 'float32'), ('past_key_values_23', [1, 8, 4096, 128], 'float32'), ('past_key_values_24', [1, 8, 4096, 128], 'float32'), ('past_key_values_25', [1, 8, 4096, 128], 'float32'), ('past_key_values_26', [1, 8, 4096, 128], 'float32'), ('past_key_values_27', [1, 8, 4096, 128], 'float32'), ('past_key_values_28', [1, 8, 4096, 128], 'float32'), ('past_key_values_29', [1, 8, 4096, 128], 'float32'), ('past_key_values_30', [1, 8, 4096, 128], 'float32'), ('past_key_values_31', [1, 8, 4096, 128], 'float32'), ('past_key_values_32', [1, 8, 4096, 128], 'float32'), ('past_key_values_33', [1, 8, 4096, 128], 'float32'), ('past_key_values_34', [1, 8, 4096, 128], 'float32'), ('past_key_values_35', [1, 8, 4096, 128], 'float32'), ('past_key_values_36', [1, 8, 4096, 128], 'float32'), ('past_key_values_37', [1, 8, 4096, 128], 'float32'), ('past_key_values_38', [1, 8, 4096, 128], 'float32'), ('past_key_values_39', [1, 8, 4096, 128], 'float32'), ('past_key_values_40', [1, 8, 4096, 128], 'float32'), ('past_key_values_41', [1, 8, 4096, 128], 'float32'), ('past_key_values_42', [1, 8, 4096, 128], 'float32'), ('past_key_values_43', [1, 8, 4096, 128], 'float32'), ('past_key_values_44', [1, 8, 4096, 128], 'float32'), ('past_key_values_45', [1, 8, 4096, 128], 'float32'), ('past_key_values_46', [1, 8, 4096, 128], 'float32'), ('past_key_values_47', [1, 8, 4096, 128], 'float32'), ('past_key_values_48', [1, 8, 4096, 128], 'float32'), ('past_key_values_49', [1, 8, 4096, 128], 'float32'), ('past_key_values_50', [1, 8, 4096, 128], 'float32'), ('past_key_values_51', [1, 8, 4096, 128], 'float32'), ('past_key_values_52', [1, 8, 4096, 128], 'float32'), ('past_key_values_53', [1, 8, 4096, 128], 'float32'), ('past_key_values_54', [1, 8, 4096, 128], 'float32'), ('past_key_values_55', [1, 8, 4096, 128], 'float32'), ('past_key_values_56', [1, 8, 4096, 128], 'float32'), ('past_key_values_57', [1, 8, 4096, 128], 'float32'), ('past_key_values_58', [1, 8, 4096, 128], 'float32'), ('past_key_values_59', [1, 8, 4096, 128], 'float32'), ('past_key_values_60', [1, 8, 4096, 128], 'float32'), ('past_key_values_61', [1, 8, 4096, 128], 'float32'), ('past_key_values_62', [1, 8, 4096, 128], 'float32'), ('past_key_values_63', [1, 8, 4096, 128], 'float32'), ('past_key_values_64', [1, 8, 4096, 128], 'float32'), ('past_key_values_65', [1, 8, 4096, 128], 'float32'), ('past_key_values_66', [1, 8, 4096, 128], 'float32'), ('past_key_values_67', [1, 8, 4096, 128], 'float32'), ('past_key_values_68', [1, 8, 4096, 128], 'float32'), ('past_key_values_69', [1, 8, 4096, 128], 'float32'), ('past_key_values_70', [1, 8, 4096, 128], 'float32'), ('past_key_values_71', [1, 8, 4096, 128], 'float32')], npu=None, tensor_parallel_size=None)], 'batch_size': 1, 'max_seq_len': 4096, 'use_inputs_embeds': False, 'use_position_ids': False, 'use_attention_mask': False, 'quantization': {}, 'lora_config': None, 'attn_impl': 'eager', 'kvcache_partition_len': None, 'kvcache_block_size': 4096, 'prefill_chunk_size': 256, 'kvcache_num_blocks': 1, 'cache_impl': 'static', 'sliding_window': None, 'sliding_window_layers': [], 'phases': ['prefill', 'decode'], 'logits_to_keep': 1, 'output_hidden_states': True, 'decoder_batch_sizes': [1], 'kvcache_metas': [KVCacheMeta(name='past_key_values_0', layer_index=0, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_1', layer_index=0, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_2', layer_index=1, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_3', layer_index=1, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_4', layer_index=2, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_5', layer_index=2, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_6', layer_index=3, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_7', layer_index=3, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_8', layer_index=4, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_9', layer_index=4, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_10', layer_index=5, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_11', layer_index=5, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_12', layer_index=6, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_13', layer_index=6, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_14', layer_index=7, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_15', layer_index=7, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_16', layer_index=8, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_17', layer_index=8, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_18', layer_index=9, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_19', layer_index=9, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_20', layer_index=10, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_21', layer_index=10, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_22', layer_index=11, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_23', layer_index=11, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_24', layer_index=12, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_25', layer_index=12, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_26', layer_index=13, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_27', layer_index=13, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_28', layer_index=14, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_29', layer_index=14, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_30', layer_index=15, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_31', layer_index=15, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_32', layer_index=16, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_33', layer_index=16, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_34', layer_index=17, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_35', layer_index=17, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_36', layer_index=18, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_37', layer_index=18, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_38', layer_index=19, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_39', layer_index=19, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_40', layer_index=20, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_41', layer_index=20, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_42', layer_index=21, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_43', layer_index=21, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_44', layer_index=22, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_45', layer_index=22, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_46', layer_index=23, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_47', layer_index=23, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_48', layer_index=24, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_49', layer_index=24, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_50', layer_index=25, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_51', layer_index=25, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_52', layer_index=26, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_53', layer_index=26, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_54', layer_index=27, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_55', layer_index=27, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_56', layer_index=28, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_57', layer_index=28, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_58', layer_index=29, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_59', layer_index=29, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_60', layer_index=30, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_61', layer_index=30, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_62', layer_index=31, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_63', layer_index=31, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_64', layer_index=32, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_65', layer_index=32, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_66', layer_index=33, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_67', layer_index=33, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_68', layer_index=34, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_69', layer_index=34, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_70', layer_index=35, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_71', layer_index=35, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32')]}, '_frozen': False, 'cls_name': 'RBLNQwen3ForCausalLMConfig', '_runtime_options': {'create_runtimes': False, 'device': None, 'device_map': None, 'activate_profiler': None, 'timeout': None}, 'npu': None, 'tensor_parallel_size': None, '_dtype': 'float32', 'optimum_rbln_version': '0.10.2', '_compile_cfgs': [RBLNCompileConfig(compiled_model_name='prefill', input_info=[('input_ids', [1, 256], 'int64'), ('cache_position', [1, 256], 'int32'), ('block_tables', [1], 'int16'), ('query_position', [], 'int16'), ('past_key_values_0', [1, 8, 4096, 128], 'float32'), ('past_key_values_1', [1, 8, 4096, 128], 'float32'), ('past_key_values_2', [1, 8, 4096, 128], 'float32'), ('past_key_values_3', [1, 8, 4096, 128], 'float32'), ('past_key_values_4', [1, 8, 4096, 128], 'float32'), ('past_key_values_5', [1, 8, 4096, 128], 'float32'), ('past_key_values_6', [1, 8, 4096, 128], 'float32'), ('past_key_values_7', [1, 8, 4096, 128], 'float32'), ('past_key_values_8', [1, 8, 4096, 128], 'float32'), ('past_key_values_9', [1, 8, 4096, 128], 'float32'), ('past_key_values_10', [1, 8, 4096, 128], 'float32'), ('past_key_values_11', [1, 8, 4096, 128], 'float32'), ('past_key_values_12', [1, 8, 4096, 128], 'float32'), ('past_key_values_13', [1, 8, 4096, 128], 'float32'), ('past_key_values_14', [1, 8, 4096, 128], 'float32'), ('past_key_values_15', [1, 8, 4096, 128], 'float32'), ('past_key_values_16', [1, 8, 4096, 128], 'float32'), ('past_key_values_17', [1, 8, 4096, 128], 'float32'), ('past_key_values_18', [1, 8, 4096, 128], 'float32'), ('past_key_values_19', [1, 8, 4096, 128], 'float32'), ('past_key_values_20', [1, 8, 4096, 128], 'float32'), ('past_key_values_21', [1, 8, 4096, 128], 'float32'), ('past_key_values_22', [1, 8, 4096, 128], 'float32'), ('past_key_values_23', [1, 8, 4096, 128], 'float32'), ('past_key_values_24', [1, 8, 4096, 128], 'float32'), ('past_key_values_25', [1, 8, 4096, 128], 'float32'), ('past_key_values_26', [1, 8, 4096, 128], 'float32'), ('past_key_values_27', [1, 8, 4096, 128], 'float32'), ('past_key_values_28', [1, 8, 4096, 128], 'float32'), ('past_key_values_29', [1, 8, 4096, 128], 'float32'), ('past_key_values_30', [1, 8, 4096, 128], 'float32'), ('past_key_values_31', [1, 8, 4096, 128], 'float32'), ('past_key_values_32', [1, 8, 4096, 128], 'float32'), ('past_key_values_33', [1, 8, 4096, 128], 'float32'), ('past_key_values_34', [1, 8, 4096, 128], 'float32'), ('past_key_values_35', [1, 8, 4096, 128], 'float32'), ('past_key_values_36', [1, 8, 4096, 128], 'float32'), ('past_key_values_37', [1, 8, 4096, 128], 'float32'), ('past_key_values_38', [1, 8, 4096, 128], 'float32'), ('past_key_values_39', [1, 8, 4096, 128], 'float32'), ('past_key_values_40', [1, 8, 4096, 128], 'float32'), ('past_key_values_41', [1, 8, 4096, 128], 'float32'), ('past_key_values_42', [1, 8, 4096, 128], 'float32'), ('past_key_values_43', [1, 8, 4096, 128], 'float32'), ('past_key_values_44', [1, 8, 4096, 128], 'float32'), ('past_key_values_45', [1, 8, 4096, 128], 'float32'), ('past_key_values_46', [1, 8, 4096, 128], 'float32'), ('past_key_values_47', [1, 8, 4096, 128], 'float32'), ('past_key_values_48', [1, 8, 4096, 128], 'float32'), ('past_key_values_49', [1, 8, 4096, 128], 'float32'), ('past_key_values_50', [1, 8, 4096, 128], 'float32'), ('past_key_values_51', [1, 8, 4096, 128], 'float32'), ('past_key_values_52', [1, 8, 4096, 128], 'float32'), ('past_key_values_53', [1, 8, 4096, 128], 'float32'), ('past_key_values_54', [1, 8, 4096, 128], 'float32'), ('past_key_values_55', [1, 8, 4096, 128], 'float32'), ('past_key_values_56', [1, 8, 4096, 128], 'float32'), ('past_key_values_57', [1, 8, 4096, 128], 'float32'), ('past_key_values_58', [1, 8, 4096, 128], 'float32'), ('past_key_values_59', [1, 8, 4096, 128], 'float32'), ('past_key_values_60', [1, 8, 4096, 128], 'float32'), ('past_key_values_61', [1, 8, 4096, 128], 'float32'), ('past_key_values_62', [1, 8, 4096, 128], 'float32'), ('past_key_values_63', [1, 8, 4096, 128], 'float32'), ('past_key_values_64', [1, 8, 4096, 128], 'float32'), ('past_key_values_65', [1, 8, 4096, 128], 'float32'), ('past_key_values_66', [1, 8, 4096, 128], 'float32'), ('past_key_values_67', [1, 8, 4096, 128], 'float32'), ('past_key_values_68', [1, 8, 4096, 128], 'float32'), ('past_key_values_69', [1, 8, 4096, 128], 'float32'), ('past_key_values_70', [1, 8, 4096, 128], 'float32'), ('past_key_values_71', [1, 8, 4096, 128], 'float32')], npu=None, tensor_parallel_size=None), RBLNCompileConfig(compiled_model_name='decoder_batch_1', input_info=[('input_ids', [1, 1], 'int64'), ('cache_position', [1, 1], 'int32'), ('block_tables', [1, 1], 'int16'), ('past_key_values_0', [1, 8, 4096, 128], 'float32'), ('past_key_values_1', [1, 8, 4096, 128], 'float32'), ('past_key_values_2', [1, 8, 4096, 128], 'float32'), ('past_key_values_3', [1, 8, 4096, 128], 'float32'), ('past_key_values_4', [1, 8, 4096, 128], 'float32'), ('past_key_values_5', [1, 8, 4096, 128], 'float32'), ('past_key_values_6', [1, 8, 4096, 128], 'float32'), ('past_key_values_7', [1, 8, 4096, 128], 'float32'), ('past_key_values_8', [1, 8, 4096, 128], 'float32'), ('past_key_values_9', [1, 8, 4096, 128], 'float32'), ('past_key_values_10', [1, 8, 4096, 128], 'float32'), ('past_key_values_11', [1, 8, 4096, 128], 'float32'), ('past_key_values_12', [1, 8, 4096, 128], 'float32'), ('past_key_values_13', [1, 8, 4096, 128], 'float32'), ('past_key_values_14', [1, 8, 4096, 128], 'float32'), ('past_key_values_15', [1, 8, 4096, 128], 'float32'), ('past_key_values_16', [1, 8, 4096, 128], 'float32'), ('past_key_values_17', [1, 8, 4096, 128], 'float32'), ('past_key_values_18', [1, 8, 4096, 128], 'float32'), ('past_key_values_19', [1, 8, 4096, 128], 'float32'), ('past_key_values_20', [1, 8, 4096, 128], 'float32'), ('past_key_values_21', [1, 8, 4096, 128], 'float32'), ('past_key_values_22', [1, 8, 4096, 128], 'float32'), ('past_key_values_23', [1, 8, 4096, 128], 'float32'), ('past_key_values_24', [1, 8, 4096, 128], 'float32'), ('past_key_values_25', [1, 8, 4096, 128], 'float32'), ('past_key_values_26', [1, 8, 4096, 128], 'float32'), ('past_key_values_27', [1, 8, 4096, 128], 'float32'), ('past_key_values_28', [1, 8, 4096, 128], 'float32'), ('past_key_values_29', [1, 8, 4096, 128], 'float32'), ('past_key_values_30', [1, 8, 4096, 128], 'float32'), ('past_key_values_31', [1, 8, 4096, 128], 'float32'), ('past_key_values_32', [1, 8, 4096, 128], 'float32'), ('past_key_values_33', [1, 8, 4096, 128], 'float32'), ('past_key_values_34', [1, 8, 4096, 128], 'float32'), ('past_key_values_35', [1, 8, 4096, 128], 'float32'), ('past_key_values_36', [1, 8, 4096, 128], 'float32'), ('past_key_values_37', [1, 8, 4096, 128], 'float32'), ('past_key_values_38', [1, 8, 4096, 128], 'float32'), ('past_key_values_39', [1, 8, 4096, 128], 'float32'), ('past_key_values_40', [1, 8, 4096, 128], 'float32'), ('past_key_values_41', [1, 8, 4096, 128], 'float32'), ('past_key_values_42', [1, 8, 4096, 128], 'float32'), ('past_key_values_43', [1, 8, 4096, 128], 'float32'), ('past_key_values_44', [1, 8, 4096, 128], 'float32'), ('past_key_values_45', [1, 8, 4096, 128], 'float32'), ('past_key_values_46', [1, 8, 4096, 128], 'float32'), ('past_key_values_47', [1, 8, 4096, 128], 'float32'), ('past_key_values_48', [1, 8, 4096, 128], 'float32'), ('past_key_values_49', [1, 8, 4096, 128], 'float32'), ('past_key_values_50', [1, 8, 4096, 128], 'float32'), ('past_key_values_51', [1, 8, 4096, 128], 'float32'), ('past_key_values_52', [1, 8, 4096, 128], 'float32'), ('past_key_values_53', [1, 8, 4096, 128], 'float32'), ('past_key_values_54', [1, 8, 4096, 128], 'float32'), ('past_key_values_55', [1, 8, 4096, 128], 'float32'), ('past_key_values_56', [1, 8, 4096, 128], 'float32'), ('past_key_values_57', [1, 8, 4096, 128], 'float32'), ('past_key_values_58', [1, 8, 4096, 128], 'float32'), ('past_key_values_59', [1, 8, 4096, 128], 'float32'), ('past_key_values_60', [1, 8, 4096, 128], 'float32'), ('past_key_values_61', [1, 8, 4096, 128], 'float32'), ('past_key_values_62', [1, 8, 4096, 128], 'float32'), ('past_key_values_63', [1, 8, 4096, 128], 'float32'), ('past_key_values_64', [1, 8, 4096, 128], 'float32'), ('past_key_values_65', [1, 8, 4096, 128], 'float32'), ('past_key_values_66', [1, 8, 4096, 128], 'float32'), ('past_key_values_67', [1, 8, 4096, 128], 'float32'), ('past_key_values_68', [1, 8, 4096, 128], 'float32'), ('past_key_values_69', [1, 8, 4096, 128], 'float32'), ('past_key_values_70', [1, 8, 4096, 128], 'float32'), ('past_key_values_71', [1, 8, 4096, 128], 'float32')], npu=None, tensor_parallel_size=None)], 'batch_size': 1, 'max_seq_len': 4096, 'use_inputs_embeds': False, 'use_position_ids': False, 'use_attention_mask': False, 'quantization': {}, 'lora_config': None, 'attn_impl': 'eager', 'kvcache_partition_len': None, 'kvcache_block_size': 4096, 'prefill_chunk_size': 256, 'kvcache_num_blocks': 1, 'cache_impl': 'static', 'sliding_window': None, 'sliding_window_layers': [], 'phases': ['prefill', 'decode'], 'logits_to_keep': 1, 'output_hidden_states': True, 'decoder_batch_sizes': [1], 'kvcache_metas': [KVCacheMeta(name='past_key_values_0', layer_index=0, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_1', layer_index=0, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_2', layer_index=1, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_3', layer_index=1, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_4', layer_index=2, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_5', layer_index=2, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_6', layer_index=3, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_7', layer_index=3, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_8', layer_index=4, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_9', layer_index=4, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_10', layer_index=5, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_11', layer_index=5, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_12', layer_index=6, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_13', layer_index=6, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_14', layer_index=7, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_15', layer_index=7, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_16', layer_index=8, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_17', layer_index=8, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_18', layer_index=9, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_19', layer_index=9, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_20', layer_index=10, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_21', layer_index=10, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_22', layer_index=11, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_23', layer_index=11, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_24', layer_index=12, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_25', layer_index=12, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_26', layer_index=13, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_27', layer_index=13, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_28', layer_index=14, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_29', layer_index=14, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_30', layer_index=15, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_31', layer_index=15, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_32', layer_index=16, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_33', layer_index=16, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_34', layer_index=17, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_35', layer_index=17, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_36', layer_index=18, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_37', layer_index=18, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_38', layer_index=19, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_39', layer_index=19, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_40', layer_index=20, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_41', layer_index=20, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_42', layer_index=21, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_43', layer_index=21, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_44', layer_index=22, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_45', layer_index=22, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_46', layer_index=23, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_47', layer_index=23, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_48', layer_index=24, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_49', layer_index=24, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_50', layer_index=25, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_51', layer_index=25, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_52', layer_index=26, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_53', layer_index=26, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_54', layer_index=27, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_55', layer_index=27, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_56', layer_index=28, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_57', layer_index=28, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_58', layer_index=29, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_59', layer_index=29, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_60', layer_index=30, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_61', layer_index=30, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_62', layer_index=31, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_63', layer_index=31, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_64', layer_index=32, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_65', layer_index=32, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_66', layer_index=33, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_67', layer_index=33, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_68', layer_index=34, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_69', layer_index=34, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_70', layer_index=35, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32'), KVCacheMeta(name='past_key_values_71', layer_index=35, shape=[1, 8, 4096, 128], layer_type='full_attention', is_auto=False, dtype='float32')]}
+MODULE optimum.rbln.transformers.models.decoderonly.modeling_decoderonly /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/decoderonly/modeling_decoderonly.py
+SOURCE_BEGIN optimum.rbln.transformers.models.decoderonly.modeling_decoderonly RBLNDecoderOnlyFlashAttentionMixin
+class RBLNDecoderOnlyFlashAttentionMixin:
+    @classmethod
+    def set_kvcache_num_blocks_after_compilation(
+        cls, compiled_models: dict[str, rebel.RBLNCompiledModel], rbln_config: RBLNDecoderOnlyModelForCausalLMConfig
+    ):
+        rbln_config.kvcache_num_blocks = cls.estimate_num_kvcache_blocks(
+            compiled_models=compiled_models, rbln_config=rbln_config
+        )
+        if rbln_config.kvcache_num_blocks < rbln_config.num_min_blocks:
+            raise ValueError(
+                "Memory is not enough for full sequence length. "
+                "Please consider decreasing `max_seq_len` to reduce the number of blocks."
+            )
+        cls.multiply_kv_cache_num_blocks(
+            compiled_models=compiled_models, rbln_config=rbln_config, multiplier=rbln_config.kvcache_num_blocks
+        )
+
+    @classmethod
+    def estimate_num_kvcache_blocks(
+        cls,
+        compiled_models: dict[str, rebel.RBLNCompiledModel],
+        rbln_config: RBLNDecoderOnlyModelForCausalLMConfig,
+        available_dram: Optional[int] = None,
+    ) -> int:
+        if available_dram is None:
+            available_dram = get_available_dram(rbln_config.npu)
+
+        if "prefill" not in rbln_config.phases:
+            logger.warning(
+                "Not estimating number of KV cache blocks since `prefill` phase is not in the `phases` list."
+            )
+            return 1
+
+        num_node = rbln_config.tensor_parallel_size or 1
+        alloc_per_node_without_dram = [0] * num_node
+
+        for compiled_model in compiled_models.values():
+            for key, alloc_per_node in compiled_model.get_alloc_per_node_by_key().items():
+                if key == "DramTensor":
+                    continue
+
+                if len(alloc_per_node) != num_node:
+                    alloc_per_node += [0] * (num_node - len(alloc_per_node))
+
+                alloc_per_node_without_dram = [
+                    a + b for a, b in zip(alloc_per_node_without_dram, alloc_per_node, strict=False)
+                ]
+
+        remaining_dram_at_node: list[int] = [
+            available_dram - without_dramtensor for without_dramtensor in alloc_per_node_without_dram
+        ]
+
+        # kvcache_tensor_sizes[key][node_id][chiplet_id] = alloc_size
+        kvcache_tensor_sizes: dict[str, list[list[int]]] = compiled_models["prefill"].exp_get_dram_tensor_sizes()
+        kvcache_meta_can_resize: dict[str, bool] = {
+            kvcache_meta.name: kvcache_meta.can_resize for kvcache_meta in rbln_config.kvcache_metas
+        }
+
+        def get_updated_kvcache_tensor_sizes(
+            kvcache_tensor_sizes: dict[str, list[list[int]]], multiplier: int
+        ) -> dict[str, list[list[int]]]:
+            # Get the updated KV cache tensor sizes by multiplying the multiplier
+            # with considering attention type (full or sliding), and memory alignment.
+            ret: dict[str, list[list[int]]] = {}
+            for key, sizes_at_node in kvcache_tensor_sizes.items():
+                m = multiplier if kvcache_meta_can_resize[key] else 1
+                ret[key] = [
+                    [align_2MB(size_at_chiplet * m) for size_at_chiplet in sizes_at_node_at_chiplet]
+                    for sizes_at_node_at_chiplet in sizes_at_node
+                ]
+            return ret
+
+        def check_memory_fits(multiplier: int) -> tuple[bool, list[int]]:
+            # Check if the given multiplier fits in memory
+            # Returns (fits: bool, kvcache_tensor_sizes_at_node: list[int])
+            updated_kvcache_tensor_sizes = get_updated_kvcache_tensor_sizes(kvcache_tensor_sizes, multiplier)
+
+            kvcache_tensor_sizes_at_node: list[int] = [0] * num_node
+            for tensor_sizes_at_node in updated_kvcache_tensor_sizes.values():
+                tensor_sizes_at_node: list[list[int]]
+                for node_id, sizes_at_chiplet in enumerate(tensor_sizes_at_node):
+                    sizes_at_chiplet: list[int]
+                    kvcache_tensor_sizes_at_node[node_id] += sum(sizes_at_chiplet)
+
+            fits = all(
+                remaining_dram_at_node[node_id] >= kvcache_tensor_sizes_at_node[node_id] for node_id in range(num_node)
+            )
+            return fits, kvcache_tensor_sizes_at_node
+
+        # Fast path: try maximum blocks first (most common case)
+        fits, _ = check_memory_fits(rbln_config.num_full_blocks)
+        if fits:
+            # Best case: maximum blocks fit in memory
+            return rbln_config.num_full_blocks
+
+        # Slow path: binary search for optimal multiplier
+        logger.debug(
+            f"[KVCache] Not enough memory for {rbln_config.num_full_blocks} blocks. "
+            f"Searching for optimal multiplier..."
+        )
+
+        left, right = 1, rbln_config.num_full_blocks - 1
+        multiplier = 1  # Default to minimum if no valid multiplier found
+
+        while left <= right:
+            mid = (left + right) // 2
+            fits, kvcache_tensor_sizes_at_node = check_memory_fits(mid)
+
+            if fits:
+                # Memory is sufficient, try larger multiplier
+                multiplier = mid
+                left = mid + 1
+            else:
+                # Memory is insufficient, try smaller multiplier
+                logger.debug(
+                    f"[KVCache] Not enough memory for {mid} blocks. Remaining DRAM: "
+                    f"{[format_byte_size(remaining_dram) for remaining_dram in remaining_dram_at_node]}, "
+                    f"KV cache tensor sizes: {[format_byte_size(size) for size in kvcache_tensor_sizes_at_node]}"
+                )
+                right = mid - 1
+
+        return multiplier
+
+    @classmethod
+    def multiply_kv_cache_num_blocks(
+        cls,
+        compiled_models: dict[str, rebel.RBLNCompiledModel],
+        rbln_config: RBLNDecoderOnlyModelForCausalLMConfig,
+        multiplier: int,
+    ):
+        if not is_compiler_supports_buffer_resize():
+            raise RuntimeError(
+                "The installed version of rebel-compiler does not support automatic kv cache size determination. "
+                "Please upgrade rebel-compiler to a version that supports this feature, "
+                "or explicitly set 'kvcache_num_blocks' in rbln_config to manually specify the cache size."
+            )
+
+        for compiled_model in compiled_models.values():
+            compiled_model.exp_multiply_buffer_size(
+                {
+                    kvcache_meta.name: multiplier
+                    for kvcache_meta in rbln_config.kvcache_metas
+                    if kvcache_meta.can_resize
+                }
+            )
+
+SOURCE_END optimum.rbln.transformers.models.decoderonly.modeling_decoderonly RBLNDecoderOnlyFlashAttentionMixin
+MODULE optimum.rbln.transformers.models.qwen3 /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3/__init__.py
+MODULE optimum.rbln.transformers.models.qwen3.configuration_qwen3 /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3/configuration_qwen3.py
+MODULE optimum.rbln.transformers.models.qwen3.modeling_qwen3 /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3/modeling_qwen3.py
+MODULE optimum.rbln.transformers.models.qwen3.qwen3_architecture /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3/qwen3_architecture.py
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3.qwen3_architecture DecoderOnlyAttention
+class DecoderOnlyAttention(nn.Module):
+    """Attention implementation for decoder-only models optimized for RBLN compilation.
+
+    This class implements a modified version of the standard attention mechanism that:
+    1. Supports static shape requirements for RBLN compilation
+    2. Handles explicit batch and position management
+
+    Args:
+        self_attn: Original attention module from the base model
+        rbln_config: RBLN model configuration containing attention parameters
+        is_sliding: Whether this is sliding window attention
+    """
+
+    _O_PROJ_ATTRS = ["o_proj", "out_proj", "dense"]
+
+    def __init__(
+        self,
+        self_attn,
+        rbln_config: "RBLNDecoderOnlyModelConfig",
+        is_sliding=False,
+    ):
+        super().__init__()
+        self.config = getattr(self_attn, "config", None)
+        self.rbln_config = rbln_config
+        self.layer_idx = self_attn.layer_idx
+        self.num_heads = getattr(self_attn, "num_heads", None) or self_attn.config.num_attention_heads
+        self.head_dim = self_attn.head_dim
+        self._phase = "prefill"
+        self.scale = torch.nn.Parameter(torch.tensor(self.get_attn_scale(self_attn)))
+
+        if hasattr(self_attn, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.num_key_value_heads
+        elif hasattr(self_attn, "config") and hasattr(self_attn.config, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.config.num_key_value_heads
+        else:
+            self.num_key_value_heads = self.num_heads
+
+        self.is_sliding = is_sliding
+        self.attn_impl = rbln_config.attn_impl if not is_sliding else "eager"
+        self.kvcache_partition_len = getattr(rbln_config, "kvcache_partition_len", None)
+        self.kvcache_block_size = rbln_config.sliding_window if is_sliding else rbln_config.kvcache_block_size
+        self.lora_config = rbln_config.lora_config
+
+        if hasattr(self_attn, "sinks"):
+            self.sinks = self_attn.sinks.data[:, None]
+
+        setattr(self, self.get_attention_name(), self.create_attention_op())
+        self.__post_init__(self_attn)
+
+        # Copy kv cache scales from original attention module if present
+        if hasattr(self_attn, "k_scale"):
+            self.k_scale = self_attn.k_scale
+        if hasattr(self_attn, "v_scale"):
+            self.v_scale = self_attn.v_scale
+
+    def _init_lora_weights(self):
+        """Initialize LoRA adapter weights by replacing linear layers with LoRALinear."""
+        for proj_name in ["q_proj", "k_proj", "v_proj", "o_proj"]:
+            original_linear = getattr(self, proj_name)
+            lora_linear = LoRALinear(
+                original_linear=original_linear,
+                lora_config=self.lora_config,
+                projection_name=proj_name,
+                layer_idx=self.layer_idx,
+            )
+            setattr(self, proj_name, lora_linear)
+
+    def get_attention_name(self):
+        if self.is_sliding:
+            return "sliding_window_attention"
+        elif self.attn_impl == "flash_attn":
+            return "flash_attention"
+        else:
+            return "attention"
+
+    def get_attention_op(self):
+        return getattr(self, self.get_attention_name())
+
+    @property
+    def phase(self):
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: str):
+        self._phase = phase
+        getattr(self, self.get_attention_name()).phase = phase
+
+    def create_attention_op(self):
+        if self.is_sliding:
+            return SlidingWindowAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+            )
+        elif self.attn_impl == "flash_attn":
+            return FlashAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                self.kvcache_partition_len,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        elif self.attn_impl == "eager":
+            return AttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        else:
+            raise NotImplementedError(f"Unknown attention implementation: {self.attn_impl}")
+
+    def __post_init__(self, self_attn=None):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = _get_attr_from_candidates(self_attn, self._O_PROJ_ATTRS)
+
+        # Initialize LoRA weights if configured, which will replace linear layers
+        if self.lora_config:
+            self._init_lora_weights()
+
+    def projection(
+        self, hidden_states, lora_int_id: Optional[torch.Tensor] = None
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Projects input hidden states into query, key, and value representations.
+
+        Args:
+            hidden_states: Input tensor of shape [batch_size, seq_len, hidden_dim]
+            lora_int_id: Adapter ID tensor for LoRA selection [batch_size]
+
+        Returns:
+            Tuple of (query_states, key_states, value_states)
+        """
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            query_states = self.q_proj(hidden_states, lora_int_id)
+            key_states = self.k_proj(hidden_states, lora_int_id)
+            value_states = self.v_proj(hidden_states, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            query_states = self.q_proj(hidden_states)
+            key_states = self.k_proj(hidden_states)
+            value_states = self.v_proj(hidden_states)
+
+        return query_states, key_states, value_states
+
+    def apply_rotary_pos_embed(self, query_states, key_states, cos, sin):
+        return apply_rotary_pos_emb(query_states, key_states, cos, sin)
+
+    def get_attn_scale(self, self_attn):
+        return 1 / math.sqrt(self_attn.head_dim)
+
+    def maybe_get_kvcache_scale(self) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        k_scale = getattr(self, "k_scale", None)
+        v_scale = getattr(self, "v_scale", None)
+        return k_scale, v_scale
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attention_mask: torch.Tensor,
+        seq_positions: torch.LongTensor,
+        past_key_values: Tuple[Tuple[torch.Tensor]],
+        cos: Optional[torch.Tensor] = None,
+        sin: Optional[torch.Tensor] = None,
+        block_tables: Optional[torch.Tensor] = None,
+        lora_int_id: Optional[torch.Tensor] = None,
+    ):
+        batch_size, query_length, _ = hidden_states.size()
+
+        query_states, key_states, value_states = self.projection(hidden_states=hidden_states, lora_int_id=lora_int_id)
+
+        query_states = query_states.view(batch_size, query_length, self.num_heads, self.head_dim).transpose(1, 2)
+        key_states = key_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(1, 2)
+        value_states = value_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(
+            1, 2
+        )
+        if hasattr(self, "q_norm") and hasattr(self, "k_norm"):
+            query_states = self.q_norm(query_states)
+            key_states = self.k_norm(key_states)
+
+        if cos is not None and sin is not None:
+            query_states, key_states = self.apply_rotary_pos_embed(query_states, key_states, cos, sin)
+
+        if batch_size > 1 and "prefill" in self.phase:
+            raise NotImplementedError(f"batch size should be 1 if prefill phase, but got {batch_size}.")
+
+        k_scale, v_scale = self.maybe_get_kvcache_scale()
+
+        attn_output = self.get_attention_op()(
+            query_states,
+            key_states,
+            value_states,
+            attention_mask,
+            past_key_state=past_key_values[self.layer_idx][0],
+            past_value_state=past_key_values[self.layer_idx][1],
+            seq_position=seq_positions,
+            scale=self.scale,
+            block_tables=block_tables,
+            block_size=self.kvcache_block_size,
+            k_scale=k_scale,
+            v_scale=v_scale,
+            s_aux=getattr(self, "sinks", None),
+        )
+
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            attn_outputs = self.o_proj(attn_output, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            attn_outputs = self.o_proj(attn_output)
+
+        return attn_outputs
+
+SOURCE_END optimum.rbln.transformers.models.qwen3.qwen3_architecture DecoderOnlyAttention
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3.qwen3_architecture Qwen3Attention
+class Qwen3Attention(DecoderOnlyAttention):
+    def __post_init__(self, self_attn):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = self_attn.o_proj
+        self.q_norm = self_attn.q_norm
+        self.k_norm = self_attn.k_norm
+
+SOURCE_END optimum.rbln.transformers.models.qwen3.qwen3_architecture Qwen3Attention
+MODULE optimum.rbln.transformers.models.qwen3_moe /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_moe/__init__.py
+MODULE optimum.rbln.transformers.models.qwen3_moe.configuration_qwen3_moe /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_moe/configuration_qwen3_moe.py
+MODULE optimum.rbln.transformers.models.qwen3_moe.modeling_qwen3_moe /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_moe/modeling_qwen3_moe.py
+MODULE optimum.rbln.transformers.models.qwen3_moe.qwen3_moe_architecture /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_moe/qwen3_moe_architecture.py
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_moe.qwen3_moe_architecture DecoderOnlyAttention
+class DecoderOnlyAttention(nn.Module):
+    """Attention implementation for decoder-only models optimized for RBLN compilation.
+
+    This class implements a modified version of the standard attention mechanism that:
+    1. Supports static shape requirements for RBLN compilation
+    2. Handles explicit batch and position management
+
+    Args:
+        self_attn: Original attention module from the base model
+        rbln_config: RBLN model configuration containing attention parameters
+        is_sliding: Whether this is sliding window attention
+    """
+
+    _O_PROJ_ATTRS = ["o_proj", "out_proj", "dense"]
+
+    def __init__(
+        self,
+        self_attn,
+        rbln_config: "RBLNDecoderOnlyModelConfig",
+        is_sliding=False,
+    ):
+        super().__init__()
+        self.config = getattr(self_attn, "config", None)
+        self.rbln_config = rbln_config
+        self.layer_idx = self_attn.layer_idx
+        self.num_heads = getattr(self_attn, "num_heads", None) or self_attn.config.num_attention_heads
+        self.head_dim = self_attn.head_dim
+        self._phase = "prefill"
+        self.scale = torch.nn.Parameter(torch.tensor(self.get_attn_scale(self_attn)))
+
+        if hasattr(self_attn, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.num_key_value_heads
+        elif hasattr(self_attn, "config") and hasattr(self_attn.config, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.config.num_key_value_heads
+        else:
+            self.num_key_value_heads = self.num_heads
+
+        self.is_sliding = is_sliding
+        self.attn_impl = rbln_config.attn_impl if not is_sliding else "eager"
+        self.kvcache_partition_len = getattr(rbln_config, "kvcache_partition_len", None)
+        self.kvcache_block_size = rbln_config.sliding_window if is_sliding else rbln_config.kvcache_block_size
+        self.lora_config = rbln_config.lora_config
+
+        if hasattr(self_attn, "sinks"):
+            self.sinks = self_attn.sinks.data[:, None]
+
+        setattr(self, self.get_attention_name(), self.create_attention_op())
+        self.__post_init__(self_attn)
+
+        # Copy kv cache scales from original attention module if present
+        if hasattr(self_attn, "k_scale"):
+            self.k_scale = self_attn.k_scale
+        if hasattr(self_attn, "v_scale"):
+            self.v_scale = self_attn.v_scale
+
+    def _init_lora_weights(self):
+        """Initialize LoRA adapter weights by replacing linear layers with LoRALinear."""
+        for proj_name in ["q_proj", "k_proj", "v_proj", "o_proj"]:
+            original_linear = getattr(self, proj_name)
+            lora_linear = LoRALinear(
+                original_linear=original_linear,
+                lora_config=self.lora_config,
+                projection_name=proj_name,
+                layer_idx=self.layer_idx,
+            )
+            setattr(self, proj_name, lora_linear)
+
+    def get_attention_name(self):
+        if self.is_sliding:
+            return "sliding_window_attention"
+        elif self.attn_impl == "flash_attn":
+            return "flash_attention"
+        else:
+            return "attention"
+
+    def get_attention_op(self):
+        return getattr(self, self.get_attention_name())
+
+    @property
+    def phase(self):
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: str):
+        self._phase = phase
+        getattr(self, self.get_attention_name()).phase = phase
+
+    def create_attention_op(self):
+        if self.is_sliding:
+            return SlidingWindowAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+            )
+        elif self.attn_impl == "flash_attn":
+            return FlashAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                self.kvcache_partition_len,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        elif self.attn_impl == "eager":
+            return AttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        else:
+            raise NotImplementedError(f"Unknown attention implementation: {self.attn_impl}")
+
+    def __post_init__(self, self_attn=None):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = _get_attr_from_candidates(self_attn, self._O_PROJ_ATTRS)
+
+        # Initialize LoRA weights if configured, which will replace linear layers
+        if self.lora_config:
+            self._init_lora_weights()
+
+    def projection(
+        self, hidden_states, lora_int_id: Optional[torch.Tensor] = None
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Projects input hidden states into query, key, and value representations.
+
+        Args:
+            hidden_states: Input tensor of shape [batch_size, seq_len, hidden_dim]
+            lora_int_id: Adapter ID tensor for LoRA selection [batch_size]
+
+        Returns:
+            Tuple of (query_states, key_states, value_states)
+        """
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            query_states = self.q_proj(hidden_states, lora_int_id)
+            key_states = self.k_proj(hidden_states, lora_int_id)
+            value_states = self.v_proj(hidden_states, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            query_states = self.q_proj(hidden_states)
+            key_states = self.k_proj(hidden_states)
+            value_states = self.v_proj(hidden_states)
+
+        return query_states, key_states, value_states
+
+    def apply_rotary_pos_embed(self, query_states, key_states, cos, sin):
+        return apply_rotary_pos_emb(query_states, key_states, cos, sin)
+
+    def get_attn_scale(self, self_attn):
+        return 1 / math.sqrt(self_attn.head_dim)
+
+    def maybe_get_kvcache_scale(self) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        k_scale = getattr(self, "k_scale", None)
+        v_scale = getattr(self, "v_scale", None)
+        return k_scale, v_scale
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attention_mask: torch.Tensor,
+        seq_positions: torch.LongTensor,
+        past_key_values: Tuple[Tuple[torch.Tensor]],
+        cos: Optional[torch.Tensor] = None,
+        sin: Optional[torch.Tensor] = None,
+        block_tables: Optional[torch.Tensor] = None,
+        lora_int_id: Optional[torch.Tensor] = None,
+    ):
+        batch_size, query_length, _ = hidden_states.size()
+
+        query_states, key_states, value_states = self.projection(hidden_states=hidden_states, lora_int_id=lora_int_id)
+
+        query_states = query_states.view(batch_size, query_length, self.num_heads, self.head_dim).transpose(1, 2)
+        key_states = key_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(1, 2)
+        value_states = value_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(
+            1, 2
+        )
+        if hasattr(self, "q_norm") and hasattr(self, "k_norm"):
+            query_states = self.q_norm(query_states)
+            key_states = self.k_norm(key_states)
+
+        if cos is not None and sin is not None:
+            query_states, key_states = self.apply_rotary_pos_embed(query_states, key_states, cos, sin)
+
+        if batch_size > 1 and "prefill" in self.phase:
+            raise NotImplementedError(f"batch size should be 1 if prefill phase, but got {batch_size}.")
+
+        k_scale, v_scale = self.maybe_get_kvcache_scale()
+
+        attn_output = self.get_attention_op()(
+            query_states,
+            key_states,
+            value_states,
+            attention_mask,
+            past_key_state=past_key_values[self.layer_idx][0],
+            past_value_state=past_key_values[self.layer_idx][1],
+            seq_position=seq_positions,
+            scale=self.scale,
+            block_tables=block_tables,
+            block_size=self.kvcache_block_size,
+            k_scale=k_scale,
+            v_scale=v_scale,
+            s_aux=getattr(self, "sinks", None),
+        )
+
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            attn_outputs = self.o_proj(attn_output, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            attn_outputs = self.o_proj(attn_output)
+
+        return attn_outputs
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_moe.qwen3_moe_architecture DecoderOnlyAttention
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_moe.qwen3_moe_architecture Qwen3MoeAttention
+class Qwen3MoeAttention(DecoderOnlyAttention):
+    def __post_init__(self, self_attn):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = self_attn.o_proj
+        self.q_norm = self_attn.q_norm
+        self.k_norm = self_attn.k_norm
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_moe.qwen3_moe_architecture Qwen3MoeAttention
+MODULE optimum.rbln.transformers.models.qwen3_vl /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl/__init__.py
+MODULE optimum.rbln.transformers.models.qwen3_vl.configuration_qwen3_vl /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl/configuration_qwen3_vl.py
+MODULE optimum.rbln.transformers.models.qwen3_vl.modeling_qwen3_vl /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl/modeling_qwen3_vl.py
+MODULE optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_architecture /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl/qwen3_vl_architecture.py
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_architecture DecoderOnlyAttention
+class DecoderOnlyAttention(nn.Module):
+    """Attention implementation for decoder-only models optimized for RBLN compilation.
+
+    This class implements a modified version of the standard attention mechanism that:
+    1. Supports static shape requirements for RBLN compilation
+    2. Handles explicit batch and position management
+
+    Args:
+        self_attn: Original attention module from the base model
+        rbln_config: RBLN model configuration containing attention parameters
+        is_sliding: Whether this is sliding window attention
+    """
+
+    _O_PROJ_ATTRS = ["o_proj", "out_proj", "dense"]
+
+    def __init__(
+        self,
+        self_attn,
+        rbln_config: "RBLNDecoderOnlyModelConfig",
+        is_sliding=False,
+    ):
+        super().__init__()
+        self.config = getattr(self_attn, "config", None)
+        self.rbln_config = rbln_config
+        self.layer_idx = self_attn.layer_idx
+        self.num_heads = getattr(self_attn, "num_heads", None) or self_attn.config.num_attention_heads
+        self.head_dim = self_attn.head_dim
+        self._phase = "prefill"
+        self.scale = torch.nn.Parameter(torch.tensor(self.get_attn_scale(self_attn)))
+
+        if hasattr(self_attn, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.num_key_value_heads
+        elif hasattr(self_attn, "config") and hasattr(self_attn.config, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.config.num_key_value_heads
+        else:
+            self.num_key_value_heads = self.num_heads
+
+        self.is_sliding = is_sliding
+        self.attn_impl = rbln_config.attn_impl if not is_sliding else "eager"
+        self.kvcache_partition_len = getattr(rbln_config, "kvcache_partition_len", None)
+        self.kvcache_block_size = rbln_config.sliding_window if is_sliding else rbln_config.kvcache_block_size
+        self.lora_config = rbln_config.lora_config
+
+        if hasattr(self_attn, "sinks"):
+            self.sinks = self_attn.sinks.data[:, None]
+
+        setattr(self, self.get_attention_name(), self.create_attention_op())
+        self.__post_init__(self_attn)
+
+        # Copy kv cache scales from original attention module if present
+        if hasattr(self_attn, "k_scale"):
+            self.k_scale = self_attn.k_scale
+        if hasattr(self_attn, "v_scale"):
+            self.v_scale = self_attn.v_scale
+
+    def _init_lora_weights(self):
+        """Initialize LoRA adapter weights by replacing linear layers with LoRALinear."""
+        for proj_name in ["q_proj", "k_proj", "v_proj", "o_proj"]:
+            original_linear = getattr(self, proj_name)
+            lora_linear = LoRALinear(
+                original_linear=original_linear,
+                lora_config=self.lora_config,
+                projection_name=proj_name,
+                layer_idx=self.layer_idx,
+            )
+            setattr(self, proj_name, lora_linear)
+
+    def get_attention_name(self):
+        if self.is_sliding:
+            return "sliding_window_attention"
+        elif self.attn_impl == "flash_attn":
+            return "flash_attention"
+        else:
+            return "attention"
+
+    def get_attention_op(self):
+        return getattr(self, self.get_attention_name())
+
+    @property
+    def phase(self):
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: str):
+        self._phase = phase
+        getattr(self, self.get_attention_name()).phase = phase
+
+    def create_attention_op(self):
+        if self.is_sliding:
+            return SlidingWindowAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+            )
+        elif self.attn_impl == "flash_attn":
+            return FlashAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                self.kvcache_partition_len,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        elif self.attn_impl == "eager":
+            return AttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        else:
+            raise NotImplementedError(f"Unknown attention implementation: {self.attn_impl}")
+
+    def __post_init__(self, self_attn=None):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = _get_attr_from_candidates(self_attn, self._O_PROJ_ATTRS)
+
+        # Initialize LoRA weights if configured, which will replace linear layers
+        if self.lora_config:
+            self._init_lora_weights()
+
+    def projection(
+        self, hidden_states, lora_int_id: Optional[torch.Tensor] = None
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Projects input hidden states into query, key, and value representations.
+
+        Args:
+            hidden_states: Input tensor of shape [batch_size, seq_len, hidden_dim]
+            lora_int_id: Adapter ID tensor for LoRA selection [batch_size]
+
+        Returns:
+            Tuple of (query_states, key_states, value_states)
+        """
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            query_states = self.q_proj(hidden_states, lora_int_id)
+            key_states = self.k_proj(hidden_states, lora_int_id)
+            value_states = self.v_proj(hidden_states, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            query_states = self.q_proj(hidden_states)
+            key_states = self.k_proj(hidden_states)
+            value_states = self.v_proj(hidden_states)
+
+        return query_states, key_states, value_states
+
+    def apply_rotary_pos_embed(self, query_states, key_states, cos, sin):
+        return apply_rotary_pos_emb(query_states, key_states, cos, sin)
+
+    def get_attn_scale(self, self_attn):
+        return 1 / math.sqrt(self_attn.head_dim)
+
+    def maybe_get_kvcache_scale(self) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        k_scale = getattr(self, "k_scale", None)
+        v_scale = getattr(self, "v_scale", None)
+        return k_scale, v_scale
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attention_mask: torch.Tensor,
+        seq_positions: torch.LongTensor,
+        past_key_values: Tuple[Tuple[torch.Tensor]],
+        cos: Optional[torch.Tensor] = None,
+        sin: Optional[torch.Tensor] = None,
+        block_tables: Optional[torch.Tensor] = None,
+        lora_int_id: Optional[torch.Tensor] = None,
+    ):
+        batch_size, query_length, _ = hidden_states.size()
+
+        query_states, key_states, value_states = self.projection(hidden_states=hidden_states, lora_int_id=lora_int_id)
+
+        query_states = query_states.view(batch_size, query_length, self.num_heads, self.head_dim).transpose(1, 2)
+        key_states = key_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(1, 2)
+        value_states = value_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(
+            1, 2
+        )
+        if hasattr(self, "q_norm") and hasattr(self, "k_norm"):
+            query_states = self.q_norm(query_states)
+            key_states = self.k_norm(key_states)
+
+        if cos is not None and sin is not None:
+            query_states, key_states = self.apply_rotary_pos_embed(query_states, key_states, cos, sin)
+
+        if batch_size > 1 and "prefill" in self.phase:
+            raise NotImplementedError(f"batch size should be 1 if prefill phase, but got {batch_size}.")
+
+        k_scale, v_scale = self.maybe_get_kvcache_scale()
+
+        attn_output = self.get_attention_op()(
+            query_states,
+            key_states,
+            value_states,
+            attention_mask,
+            past_key_state=past_key_values[self.layer_idx][0],
+            past_value_state=past_key_values[self.layer_idx][1],
+            seq_position=seq_positions,
+            scale=self.scale,
+            block_tables=block_tables,
+            block_size=self.kvcache_block_size,
+            k_scale=k_scale,
+            v_scale=v_scale,
+            s_aux=getattr(self, "sinks", None),
+        )
+
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            attn_outputs = self.o_proj(attn_output, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            attn_outputs = self.o_proj(attn_output)
+
+        return attn_outputs
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_architecture DecoderOnlyAttention
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_architecture Qwen3VLVisionAttention
+class Qwen3VLVisionAttention(nn.Module):
+    def __init__(self, model: nn.Module, rbln_config: RBLNQwen3VLVisionModelConfig) -> None:
+        super().__init__()
+        self._origin_model = model
+        self.rbln_config = rbln_config
+        self.num_heads = model.num_heads
+        self.head_dim = getattr(model, "head_dim", model.proj.in_features // model.num_heads)
+        self.qkv = model.qkv
+        self.proj = model.proj
+        self.scale = torch.tensor(1 / math.sqrt(self.head_dim), dtype=rbln_config.dtype)
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attn_mask: torch.Tensor,
+        position_embeddings: Tuple[torch.Tensor, torch.Tensor],
+    ) -> torch.Tensor:
+        seq_length = hidden_states.shape[0]
+        hidden_states = hidden_states.unsqueeze(0)
+        q, k, v = (
+            self.qkv(hidden_states).reshape(1, seq_length, 3, self.num_heads, -1).permute(2, 0, 3, 1, 4).unbind(0)
+        )
+        cos, sin = position_embeddings
+        q, k = apply_rotary_pos_emb(q, k, cos, sin)
+        attn_output = nn.functional.scaled_dot_product_attention(
+            q,
+            k,
+            v,
+            attn_mask=attn_mask,
+            dropout_p=0.0,
+            is_causal=False,
+            scale=self.scale.item(),
+        )
+        attn_output = attn_output.transpose(1, 2)
+        attn_output = attn_output.reshape(1, seq_length, -1)
+        attn_output = self.proj(attn_output).squeeze(0)
+
+        return attn_output
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_architecture Qwen3VLVisionAttention
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_architecture Qwen3VLAttention
+class Qwen3VLAttention(DecoderOnlyAttention):
+    def __post_init__(self, self_attn):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = self_attn.o_proj
+        self.q_norm = self_attn.q_norm
+        self.k_norm = self_attn.k_norm
+
+    def get_attn_scale(self, self_attn):
+        if hasattr(self_attn, "config") and hasattr(self_attn.config, "head_dim"):
+            return self_attn.config.head_dim**-0.5
+        return self_attn.head_dim**-0.5
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_architecture Qwen3VLAttention
+MODULE optimum.rbln.transformers.models.qwen3_vl.qwen3_vl_runtime_utils /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl/qwen3_vl_runtime_utils.py
+MODULE optimum.rbln.transformers.models.qwen3_vl_moe /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl_moe/__init__.py
+MODULE optimum.rbln.transformers.models.qwen3_vl_moe.configuration_qwen3_vl_moe /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl_moe/configuration_qwen3_vl_moe.py
+MODULE optimum.rbln.transformers.models.qwen3_vl_moe.modeling_qwen3_vl_moe /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl_moe/modeling_qwen3_vl_moe.py
+MODULE optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_architecture /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl_moe/qwen3_vl_moe_architecture.py
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_architecture DecoderOnlyAttention
+class DecoderOnlyAttention(nn.Module):
+    """Attention implementation for decoder-only models optimized for RBLN compilation.
+
+    This class implements a modified version of the standard attention mechanism that:
+    1. Supports static shape requirements for RBLN compilation
+    2. Handles explicit batch and position management
+
+    Args:
+        self_attn: Original attention module from the base model
+        rbln_config: RBLN model configuration containing attention parameters
+        is_sliding: Whether this is sliding window attention
+    """
+
+    _O_PROJ_ATTRS = ["o_proj", "out_proj", "dense"]
+
+    def __init__(
+        self,
+        self_attn,
+        rbln_config: "RBLNDecoderOnlyModelConfig",
+        is_sliding=False,
+    ):
+        super().__init__()
+        self.config = getattr(self_attn, "config", None)
+        self.rbln_config = rbln_config
+        self.layer_idx = self_attn.layer_idx
+        self.num_heads = getattr(self_attn, "num_heads", None) or self_attn.config.num_attention_heads
+        self.head_dim = self_attn.head_dim
+        self._phase = "prefill"
+        self.scale = torch.nn.Parameter(torch.tensor(self.get_attn_scale(self_attn)))
+
+        if hasattr(self_attn, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.num_key_value_heads
+        elif hasattr(self_attn, "config") and hasattr(self_attn.config, "num_key_value_heads"):
+            self.num_key_value_heads = self_attn.config.num_key_value_heads
+        else:
+            self.num_key_value_heads = self.num_heads
+
+        self.is_sliding = is_sliding
+        self.attn_impl = rbln_config.attn_impl if not is_sliding else "eager"
+        self.kvcache_partition_len = getattr(rbln_config, "kvcache_partition_len", None)
+        self.kvcache_block_size = rbln_config.sliding_window if is_sliding else rbln_config.kvcache_block_size
+        self.lora_config = rbln_config.lora_config
+
+        if hasattr(self_attn, "sinks"):
+            self.sinks = self_attn.sinks.data[:, None]
+
+        setattr(self, self.get_attention_name(), self.create_attention_op())
+        self.__post_init__(self_attn)
+
+        # Copy kv cache scales from original attention module if present
+        if hasattr(self_attn, "k_scale"):
+            self.k_scale = self_attn.k_scale
+        if hasattr(self_attn, "v_scale"):
+            self.v_scale = self_attn.v_scale
+
+    def _init_lora_weights(self):
+        """Initialize LoRA adapter weights by replacing linear layers with LoRALinear."""
+        for proj_name in ["q_proj", "k_proj", "v_proj", "o_proj"]:
+            original_linear = getattr(self, proj_name)
+            lora_linear = LoRALinear(
+                original_linear=original_linear,
+                lora_config=self.lora_config,
+                projection_name=proj_name,
+                layer_idx=self.layer_idx,
+            )
+            setattr(self, proj_name, lora_linear)
+
+    def get_attention_name(self):
+        if self.is_sliding:
+            return "sliding_window_attention"
+        elif self.attn_impl == "flash_attn":
+            return "flash_attention"
+        else:
+            return "attention"
+
+    def get_attention_op(self):
+        return getattr(self, self.get_attention_name())
+
+    @property
+    def phase(self):
+        return self._phase
+
+    @phase.setter
+    def phase(self, phase: str):
+        self._phase = phase
+        getattr(self, self.get_attention_name()).phase = phase
+
+    def create_attention_op(self):
+        if self.is_sliding:
+            return SlidingWindowAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+            )
+        elif self.attn_impl == "flash_attn":
+            return FlashAttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                self.kvcache_partition_len,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        elif self.attn_impl == "eager":
+            return AttentionOp(
+                self.num_heads,
+                self.head_dim,
+                self.num_key_value_heads,
+                rbln_config=self.rbln_config,
+                is_sliding=False,
+            )
+        else:
+            raise NotImplementedError(f"Unknown attention implementation: {self.attn_impl}")
+
+    def __post_init__(self, self_attn=None):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = _get_attr_from_candidates(self_attn, self._O_PROJ_ATTRS)
+
+        # Initialize LoRA weights if configured, which will replace linear layers
+        if self.lora_config:
+            self._init_lora_weights()
+
+    def projection(
+        self, hidden_states, lora_int_id: Optional[torch.Tensor] = None
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Projects input hidden states into query, key, and value representations.
+
+        Args:
+            hidden_states: Input tensor of shape [batch_size, seq_len, hidden_dim]
+            lora_int_id: Adapter ID tensor for LoRA selection [batch_size]
+
+        Returns:
+            Tuple of (query_states, key_states, value_states)
+        """
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            query_states = self.q_proj(hidden_states, lora_int_id)
+            key_states = self.k_proj(hidden_states, lora_int_id)
+            value_states = self.v_proj(hidden_states, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            query_states = self.q_proj(hidden_states)
+            key_states = self.k_proj(hidden_states)
+            value_states = self.v_proj(hidden_states)
+
+        return query_states, key_states, value_states
+
+    def apply_rotary_pos_embed(self, query_states, key_states, cos, sin):
+        return apply_rotary_pos_emb(query_states, key_states, cos, sin)
+
+    def get_attn_scale(self, self_attn):
+        return 1 / math.sqrt(self_attn.head_dim)
+
+    def maybe_get_kvcache_scale(self) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        k_scale = getattr(self, "k_scale", None)
+        v_scale = getattr(self, "v_scale", None)
+        return k_scale, v_scale
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attention_mask: torch.Tensor,
+        seq_positions: torch.LongTensor,
+        past_key_values: Tuple[Tuple[torch.Tensor]],
+        cos: Optional[torch.Tensor] = None,
+        sin: Optional[torch.Tensor] = None,
+        block_tables: Optional[torch.Tensor] = None,
+        lora_int_id: Optional[torch.Tensor] = None,
+    ):
+        batch_size, query_length, _ = hidden_states.size()
+
+        query_states, key_states, value_states = self.projection(hidden_states=hidden_states, lora_int_id=lora_int_id)
+
+        query_states = query_states.view(batch_size, query_length, self.num_heads, self.head_dim).transpose(1, 2)
+        key_states = key_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(1, 2)
+        value_states = value_states.view(batch_size, query_length, self.num_key_value_heads, self.head_dim).transpose(
+            1, 2
+        )
+        if hasattr(self, "q_norm") and hasattr(self, "k_norm"):
+            query_states = self.q_norm(query_states)
+            key_states = self.k_norm(key_states)
+
+        if cos is not None and sin is not None:
+            query_states, key_states = self.apply_rotary_pos_embed(query_states, key_states, cos, sin)
+
+        if batch_size > 1 and "prefill" in self.phase:
+            raise NotImplementedError(f"batch size should be 1 if prefill phase, but got {batch_size}.")
+
+        k_scale, v_scale = self.maybe_get_kvcache_scale()
+
+        attn_output = self.get_attention_op()(
+            query_states,
+            key_states,
+            value_states,
+            attention_mask,
+            past_key_state=past_key_values[self.layer_idx][0],
+            past_value_state=past_key_values[self.layer_idx][1],
+            seq_position=seq_positions,
+            scale=self.scale,
+            block_tables=block_tables,
+            block_size=self.kvcache_block_size,
+            k_scale=k_scale,
+            v_scale=v_scale,
+            s_aux=getattr(self, "sinks", None),
+        )
+
+        # Check if using LoRALinear (which accepts lora_int_id) or standard linear layers
+        if self.lora_config:
+            # LoRALinear handles both base projection and LoRA in one forward pass
+            attn_outputs = self.o_proj(attn_output, lora_int_id)
+        else:
+            # Standard linear projection without LoRA
+            attn_outputs = self.o_proj(attn_output)
+
+        return attn_outputs
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_architecture DecoderOnlyAttention
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_architecture Qwen3VLAttention
+class Qwen3VLAttention(DecoderOnlyAttention):
+    def __post_init__(self, self_attn):
+        self.q_proj = self_attn.q_proj
+        self.k_proj = self_attn.k_proj
+        self.v_proj = self_attn.v_proj
+        self.o_proj = self_attn.o_proj
+        self.q_norm = self_attn.q_norm
+        self.k_norm = self_attn.k_norm
+
+    def get_attn_scale(self, self_attn):
+        if hasattr(self_attn, "config") and hasattr(self_attn.config, "head_dim"):
+            return self_attn.config.head_dim**-0.5
+        return self_attn.head_dim**-0.5
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_architecture Qwen3VLAttention
+SOURCE_BEGIN optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_architecture Qwen3VLMoeAttention
+class Qwen3VLMoeAttention(Qwen3VLAttention):
+    pass
+
+SOURCE_END optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_architecture Qwen3VLMoeAttention
+MODULE optimum.rbln.transformers.models.qwen3_vl_moe.qwen3_vl_moe_runtime_utils /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl_moe/qwen3_vl_moe_runtime_utils.py
+GRAPH_TYPE <class 'rebel.compiled_model.RBLNCompiledModel'>
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/modeling.py
+282:transformers models, or sample, timestep for diffusers models).
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/cli.py
+153:EXAMPLES_TEXT = r"""
+154:Quick start examples
+174:--hf-trust-remote-code true --hf-dtype bfloat16 \
+185:- Show this examples list anytime with:  optimum-rbln-cli --examples
+319:print("  - Compile-time examples: --npu RBLN-CA25 --tensor_parallel_size 4")
+321:print("  - To see examples: optimum-rbln-cli --examples")
+432:pre_parser.add_argument("--examples", action="store_true", help="Show quick start examples and exit")
+471:if pre_args.examples:
+472:print(EXAMPLES_TEXT)
+483:epilog=EXAMPLES_TEXT,
+569:# Print help with examples when no args were provided
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/configuration_utils.py
+49:Example:
+240:For example, the parsed contents of `rbln_config.json`.
+249:Examples:
+303:Examples:
+339:Examples:
+360:Examples:
+924:Examples:
+1017:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/modeling_diffusers.py
+54:Example:
+436:# Example:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/controlnet.py
+44:sample: torch.Tensor,
+56:down_block_res_samples, mid_block_res_sample = self.controlnet(
+57:sample=sample,
+65:return down_block_res_samples, mid_block_res_sample
+75:sample: torch.Tensor,
+88:down_block_res_samples, mid_block_res_sample = self.controlnet(
+89:sample=sample,
+97:return down_block_res_samples, mid_block_res_sample
+142:rbln_config.controlnet.vae_sample_size = rbln_vae_cls.get_vae_sample_size(pipe, rbln_config.vae)
+143:rbln_config.controlnet.unet_sample_size = rbln_unet_cls.get_unet_sample_size(
+157:if rbln_config.unet_sample_size is None:
+158:raise ValueError("`unet_sample_size` (latent height, width) must be specified (ex. unet's sample_size)")
+160:if rbln_config.vae_sample_size is None:
+161:raise ValueError("`vae_sample_size` (input image height, width) must be specified (ex. vae's sample_size)")
+168:"sample",
+172:rbln_config.unet_sample_size[0],
+173:rbln_config.unet_sample_size[1],
+193:[rbln_config.batch_size, 3, rbln_config.vae_sample_size[0], rbln_config.vae_sample_size[1]],
+213:sample: torch.FloatTensor,
+226:sample (torch.FloatTensor): The noisy input tensor.
+237:sample_batch_size = sample.size()[0]
+239:if sample_batch_size != compiled_batch_size and (
+240:sample_batch_size * 2 == compiled_batch_size or sample_batch_size == compiled_batch_size * 2
+243:f"Mismatch between ControlNet's runtime batch size ({sample_batch_size}) and compiled batch size ({compiled_batch_size}). "
+252:sample.contiguous(),
+261:sample.contiguous(),
+268:down_block_res_samples = output[:-1]
+269:mid_block_res_sample = output[-1]
+270:output = (down_block_res_samples, mid_block_res_sample)
+279:down_block_res_samples=output[:-1],
+280:mid_block_res_sample=output[-1],
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/transformers/transformer_cosmos.py
+344:return Transformer2DModelOutput(sample=hidden_states)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/transformers/transformer_sd3.py
+87:if rbln_config.sample_size is None:
+89:rbln_config.transformer.sample_size = (
+94:rbln_config.transformer.sample_size = pipe.default_sample_size
+108:if rbln_config.sample_size is None:
+109:rbln_config.sample_size = model_config.sample_size
+111:if isinstance(rbln_config.sample_size, int):
+112:rbln_config.sample_size = (rbln_config.sample_size, rbln_config.sample_size)
+120:rbln_config.sample_size[0],
+121:rbln_config.sample_size[1],
+177:sample_batch_size = hidden_states.size()[0]
+179:if sample_batch_size != compiled_batch_size and (
+180:sample_batch_size * 2 == compiled_batch_size or sample_batch_size == compiled_batch_size * 2
+183:f"Mismatch between transformer's runtime batch size ({sample_batch_size}) and compiled batch size ({compiled_batch_size}). "
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/unets/unet_spatio_temporal_condition.py
+45:sample: torch.Tensor,
+51:sample=sample,
+65:output_key = "sample"
+89:def get_unet_sample_size(
+98:vae_sample_size = pipe.vae.config.sample_size
+99:if isinstance(vae_sample_size, int):
+100:vae_sample_size = (vae_sample_size, vae_sample_size)
+102:sample_size = (
+103:vae_sample_size[0] // scale_factor,
+104:vae_sample_size[1] // scale_factor,
+107:sample_size = (image_size[0] // scale_factor, image_size[1] // scale_factor)
+108:return sample_size
+114:rbln_config.unet.sample_size = cls.get_unet_sample_size(
+130:if rbln_config.sample_size is None:
+131:rbln_config.sample_size = model_config.sample_size
+135:"sample",
+140:rbln_config.sample_size[0],
+141:rbln_config.sample_size[1],
+164:sample: torch.Tensor,
+175:sample (torch.Tensor): The noisy input tensor with the following shape `(batch, channel, height, width)`.
+184:sample_batch_size = sample.size()[0]
+186:if sample_batch_size != compiled_batch_size and (
+187:sample_batch_size * 2 == compiled_batch_size or sample_batch_size == compiled_batch_size * 2
+190:f"Mismatch between UNet's runtime batch size ({sample_batch_size}) and compiled batch size ({compiled_batch_size}). "
+196:sample.contiguous(),
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/unets/unet_2d_condition.py
+42:sample: torch.Tensor,
+63:sample=sample,
+81:sample: torch.Tensor,
+108:sample=sample,
+126:sample: torch.Tensor,
+133:sample=sample,
+185:def get_unet_sample_size(
+199:# In case of img2img, sample size of unet is determined by vae encoder.
+200:vae_sample_size = pipe.vae.config.sample_size
+201:if isinstance(vae_sample_size, int):
+202:vae_sample_size = (vae_sample_size, vae_sample_size)
+204:sample_size = (
+205:vae_sample_size[0] // scale_factor,
+206:vae_sample_size[1] // scale_factor,
+213:sample_size = (512 // scale_factor, 512 // scale_factor)
+215:sample_size = pipe.unet.config.sample_size
+216:if isinstance(sample_size, int):
+217:sample_size = (sample_size, sample_size)
+219:sample_size = (image_size[0] // scale_factor, image_size[1] // scale_factor)
+221:return sample_size
+236:rbln_config.unet.sample_size = cls.get_unet_sample_size(
+251:if rbln_config.sample_size is None:
+252:rbln_config.sample_size = model_config.sample_size
+254:if isinstance(rbln_config.sample_size, int):
+255:rbln_config.sample_size = (rbln_config.sample_size, rbln_config.sample_size)
+259:"sample",
+263:rbln_config.sample_size[0],
+264:rbln_config.sample_size[1],
+285:rbln_config.sample_size[0],
+286:rbln_config.sample_size[1],
+288:height, width = rbln_config.sample_size[0], rbln_config.sample_size[1]
+309:rbln_config.sample_size[0] // 2**num_cross_attn_blocks,
+310:rbln_config.sample_size[1] // 2**num_cross_attn_blocks,
+337:sample: torch.Tensor,
+356:sample (torch.Tensor): The noisy input tensor with the following shape `(batch, channel, height, width)`.
+368:sample_batch_size = sample.size()[0]
+370:if sample_batch_size != compiled_batch_size and (
+371:sample_batch_size * 2 == compiled_batch_size or sample_batch_size == compiled_batch_size * 2
+374:f"Mismatch between UNet's runtime batch size ({sample_batch_size}) and compiled batch size ({compiled_batch_size}). "
+385:sample.contiguous(),
+396:sample.contiguous(),
+403:sample.contiguous(),
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/autoencoders/autoencoder_kl.py
+93:def get_vae_sample_size(
+96:sample_size = rbln_config.sample_size
+109:if sample_size is None:
+110:sample_size = noise_module.config.sample_size
+111:if isinstance(sample_size, int):
+112:sample_size = (sample_size, sample_size)
+113:sample_size = (sample_size[0] * vae_scale_factor, sample_size[1] * vae_scale_factor)
+116:return sample_size, vae_scale_factor
+118:return sample_size
+124:rbln_config.vae.sample_size, rbln_config.vae.vae_scale_factor = cls.get_vae_sample_size(
+137:if rbln_config.sample_size is None:
+138:rbln_config.sample_size = model_config.sample_size
+140:if isinstance(rbln_config.sample_size, int):
+141:rbln_config.sample_size = (rbln_config.sample_size, rbln_config.sample_size)
+164:rbln_config.sample_size[0],
+165:rbln_config.sample_size[1],
+178:rbln_config.latent_sample_size[0],
+179:rbln_config.latent_sample_size[1],
+255:return DecoderOutput(sample=dec)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/autoencoders/autoencoder_kl_cosmos.py
+245:return DecoderOutput(sample=decoded)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/autoencoders/vq_model.py
+118:rbln_config.sample_size[0],
+119:rbln_config.sample_size[1],
+133:rbln_config.latent_sample_size[0],
+134:rbln_config.latent_sample_size[1],
+211:return DecoderOutput(sample=dec, commit_loss=commit_loss)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/autoencoders/vae.py
+89:x.shape[-1] > self.tile_sample_min_size or x.shape[-2] > self.tile_sample_min_size
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/models/autoencoders/autoencoder_kl_temporal_decoder.py
+101:def get_vae_sample_size(
+107:sample_size = rbln_config.sample_size
+116:if sample_size is None:
+117:sample_size = pipe.unet.config.sample_size
+118:if isinstance(sample_size, int):
+119:sample_size = (sample_size, sample_size)
+120:sample_size = (sample_size[0] * vae_scale_factor, sample_size[1] * vae_scale_factor)
+123:return sample_size, vae_scale_factor
+125:return sample_size
+131:rbln_config.vae.sample_size, rbln_config.vae.vae_scale_factor = cls.get_vae_sample_size(
+166:if rbln_config.sample_size is None:
+167:rbln_config.sample_size = model_config.sample_size
+184:rbln_config.sample_size[0],
+185:rbln_config.sample_size[1],
+199:rbln_config.latent_sample_size[0],
+200:rbln_config.latent_sample_size[1],
+275:return DecoderOutput(sample=decoded)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/models/configuration_controlnet.py
+29:unet_sample_size: Optional[Tuple[int, int]] = None,
+30:vae_sample_size: Optional[Tuple[int, int]] = None,
+39:unet_sample_size (Optional[Tuple[int, int]]): The spatial dimensions (height, width)
+40:of the UNet output samples.
+41:vae_sample_size (Optional[Tuple[int, int]]): The spatial dimensions (height, width)
+58:self.unet_sample_size = unet_sample_size
+59:self.vae_sample_size = vae_sample_size
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/models/configuration_unet_spatio_temporal_condition.py
+26:sample_size: Optional[Tuple[int, int]] = None,
+34:sample_size (Optional[Tuple[int, int]]): The spatial dimensions (height, width) of the generated samples.
+53:self.sample_size = sample_size
+54:if isinstance(sample_size, int):
+55:self.sample_size = (sample_size, sample_size)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/models/configuration_autoencoder_kl.py
+31:sample_size: Optional[Tuple[int, int]] = None,
+41:sample_size (Optional[Tuple[int, int]]): The spatial dimensions (height, width) of the input/output images.
+63:self.sample_size = sample_size
+64:if isinstance(sample_size, int):
+65:self.sample_size = (sample_size, sample_size)
+69:return self.sample_size
+72:def latent_sample_size(self):
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/models/configuration_vq_model.py
+31:sample_size: Optional[Tuple[int, int]] = None,
+41:sample_size (Optional[Tuple[int, int]]): The spatial dimensions (height, width) of the input/output images.
+46:Determines the downsampling ratio between original images and latent representations.
+60:self.sample_size = sample_size
+61:if isinstance(self.sample_size, int):
+62:self.sample_size = (self.sample_size, self.sample_size)
+70:return self.sample_size
+73:def latent_sample_size(self):
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/models/configuration_unet_2d_condition.py
+33:sample_size: Optional[Tuple[int, int]] = None,
+46:sample_size (Optional[Tuple[int, int]]): The spatial dimensions (height, width) of the generated samples.
+75:self.sample_size = sample_size
+76:if isinstance(sample_size, int):
+77:self.sample_size = (sample_size, sample_size)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/models/configuration_transformer_sd3.py
+33:sample_size: Optional[Union[int, Tuple[int, int]]] = None,
+40:sample_size (Optional[Union[int, Tuple[int, int]]]): The spatial dimensions (height, width)
+41:of the generated samples. If an integer is provided, it's used for both height and width.
+57:self.sample_size = sample_size
+58:if isinstance(self.sample_size, int):
+59:self.sample_size = (self.sample_size, self.sample_size)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/models/configuration_autoencoder_kl_temporal_decoder.py
+24:sample_size: Optional[Tuple[int, int]] = None,
+34:sample_size (Optional[Tuple[int, int]]): The spatial dimensions (height, width) of the input/output images.
+57:self.sample_size = sample_size
+58:if isinstance(sample_size, int):
+59:self.sample_size = (sample_size, sample_size)
+63:return self.sample_size
+66:def latent_sample_size(self):
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/pipelines/configuration_stable_diffusion_3.py
+35:sample_size: Optional[Tuple[int, int]] = None,
+58:sample_size (Optional[Tuple[int, int]]): Spatial dimensions for the transformer model.
+123:sample_size=sample_size,
+130:sample_size=image_size,
+153:def sample_size(self):
+154:return self.transformer.sample_size
+158:return self.vae.sample_size
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/pipelines/configuration_kandinsky2_2.py
+32:sample_size: Optional[Tuple[int, int]] = None,
+48:sample_size (Optional[Tuple[int, int]]): Spatial dimensions for the UNet model.
+94:sample_size=sample_size,
+100:sample_size=image_size,  # image size is equal to sample size in vae
+121:return self.movq.sample_size
+226:sample_size: Optional[Tuple[int, int]] = None,
+253:sample_size (Optional[Tuple[int, int]]): Spatial dimensions for the UNet model.
+314:sample_size=sample_size,
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/pipelines/configuration_controlnet.py
+38:sample_size: Optional[Tuple[int, int]] = None,
+58:sample_size (Optional[Tuple[int, int]]): Spatial dimensions for the UNet model.
+104:sample_size=sample_size,
+111:sample_size=image_size,  # image size is equal to sample size in vae
+140:def sample_size(self):
+141:return self.unet.sample_size
+145:return self.vae.sample_size
+185:sample_size: Optional[Tuple[int, int]] = None,
+207:sample_size (Optional[Tuple[int, int]]): Spatial dimensions for the UNet model.
+258:sample_size=sample_size,
+265:sample_size=image_size,  # image size is equal to sample size in vae
+295:def sample_size(self):
+296:return self.unet.sample_size
+300:return self.vae.sample_size
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/pipelines/configuration_stable_diffusion.py
+37:sample_size: Optional[Tuple[int, int]] = None,
+55:sample_size (Optional[Tuple[int, int]]): Spatial dimensions for the UNet model.
+101:sample_size=sample_size,
+108:sample_size=image_size,
+127:def sample_size(self):
+128:return self.unet.sample_size
+132:return self.vae.sample_size
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/pipelines/configuration_stable_diffusion_xl.py
+38:sample_size: Optional[Tuple[int, int]] = None,
+58:sample_size (Optional[Tuple[int, int]]): Spatial dimensions for the UNet model.
+110:sample_size=sample_size,
+117:sample_size=image_size,  # image size is equal to sample size in vae
+136:def sample_size(self):
+137:return self.unet.sample_size
+141:return self.vae.sample_size
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/configurations/pipelines/configuration_stable_video_diffusion.py
+88:sample_size=image_size,  # image size is equal to sample size in vae
+109:def sample_size(self):
+110:return self.unet.sample_size
+114:return self.vae.sample_size
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/pipelines/cosmos/cosmos_guardrail.py
+335:self.dtype = torch.bfloat16
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/pipelines/controlnet/pipeline_controlnet_sd_xl_img2img.py
+374:Pre-generated noisy latents, sampled from a Gaussian distribution, to be used as inputs for image
+376:tensor will ge generated by sampling using the supplied random `generator`.
+419:If `original_size` is not the same as `target_size` the image will appear to be down- or upsampled.
+737:down_block_res_samples, mid_block_res_sample = self.controlnet(
+752:down_block_res_samples = [torch.cat([torch.zeros_like(d), d]) for d in down_block_res_samples]
+753:mid_block_res_sample = torch.cat([torch.zeros_like(mid_block_res_sample), mid_block_res_sample])
+764:down_block_additional_residuals=down_block_res_samples,
+765:mid_block_additional_residual=mid_block_res_sample,
+775:# compute the previous noisy sample x_t -> x_t-1
+803:# make sure the VAE is in float32 mode, as it overflows in float16
+804:needs_upcasting = self.vae.dtype == torch.float16 and self.vae.config.force_upcast
+829:self.vae.to(dtype=torch.float16)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/pipelines/controlnet/pipeline_controlnet_img2img.py
+275:height (`int`, *optional*, defaults to `self.unet.config.sample_size * self.vae_scale_factor`):
+277:width (`int`, *optional*, defaults to `self.unet.config.sample_size * self.vae_scale_factor`):
+303:Pre-generated noisy latents sampled from a Gaussian distribution, to be used as inputs for image
+305:tensor is generated by sampling using the supplied random `generator`.
+566:down_block_res_samples, mid_block_res_sample = self.controlnet(
+580:down_block_res_samples = [torch.cat([torch.zeros_like(d), d]) for d in down_block_res_samples]
+581:mid_block_res_sample = torch.cat([torch.zeros_like(mid_block_res_sample), mid_block_res_sample])
+589:down_block_additional_residuals=down_block_res_samples,
+590:mid_block_additional_residual=mid_block_res_sample,
+600:# compute the previous noisy sample x_t -> x_t-1
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/pipelines/controlnet/multicontrolnet.py
+86:sample: torch.FloatTensor,
+102:This method processes multiple ControlNet models in sequence, applying each one to the input sample
+107:sample (torch.FloatTensor): The noisy input tensor.
+122:down_samples, mid_sample = controlnet(
+123:sample=sample.contiguous(),
+131:# merge samples
+133:down_block_res_samples, mid_block_res_sample = down_samples, mid_sample
+135:down_block_res_samples = [
+136:samples_prev + samples_curr
+137:for samples_prev, samples_curr in zip(down_block_res_samples, down_samples, strict=False)
+139:mid_block_res_sample += mid_sample
+141:return down_block_res_samples, mid_block_res_sample
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/pipelines/controlnet/pipeline_controlnet_sd_xl.py
+315:height (`int`, *optional*, defaults to `self.unet.config.sample_size * self.vae_scale_factor`):
+319:width (`int`, *optional*, defaults to `self.unet.config.sample_size * self.vae_scale_factor`):
+328:completed before it is intentionally prematurely terminated. As a result, the returned sample will
+351:Pre-generated noisy latents sampled from a Gaussian distribution, to be used as inputs for image
+353:tensor is generated by sampling using the supplied random `generator`.
+393:If `original_size` is not the same as `target_size` the image will appear to be down- or upsampled.
+731:down_block_res_samples, mid_block_res_sample = self.controlnet(
+746:down_block_res_samples = [torch.cat([torch.zeros_like(d), d]) for d in down_block_res_samples]
+747:mid_block_res_sample = torch.cat([torch.zeros_like(mid_block_res_sample), mid_block_res_sample])
+759:down_block_additional_residuals=down_block_res_samples,
+760:mid_block_additional_residual=mid_block_res_sample,
+770:# compute the previous noisy sample x_t -> x_t-1
+791:# make sure the VAE is in float32 mode, as it overflows in float16
+792:needs_upcasting = self.vae.dtype == torch.float16 and self.vae.config.force_upcast
+817:self.vae.to(dtype=torch.float16)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/diffusers/pipelines/controlnet/pipeline_controlnet.py
+280:height (`int`, *optional*, defaults to `self.unet.config.sample_size * self.vae_scale_factor`):
+282:width (`int`, *optional*, defaults to `self.unet.config.sample_size * self.vae_scale_factor`):
+306:Pre-generated noisy latents sampled from a Gaussian distribution, to be used as inputs for image
+308:tensor is generated by sampling using the supplied random `generator`.
+587:down_block_res_samples, mid_block_res_sample = self.controlnet(
+601:down_block_res_samples = [torch.cat([torch.zeros_like(d), d]) for d in down_block_res_samples]
+602:mid_block_res_sample = torch.cat([torch.zeros_like(mid_block_res_sample), mid_block_res_sample])
+611:down_block_additional_residuals=down_block_res_samples,
+612:mid_block_additional_residual=mid_block_res_sample,
+622:# compute the previous noisy sample x_t -> x_t-1
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/utils/deprecation.py
+53:# Scenario Table for Deprecation Strategy Example
+240:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/modeling_rope_utils.py
+219:def linear_ramp_factor(min, max, dim):
+224:ramp_func = torch.clamp(linear_func, 0, 1)
+225:return ramp_func
+237:inv_freq_extrapolation_factor = 1 - linear_ramp_factor(low, high, dim // 2).to(device=device, dtype=torch.float)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2_moe/configuration_qwen2_moe.py
+22:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2_moe/modeling_qwen2_moe.py
+31:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/gpt_oss/modeling_gpt_oss.py
+55:Examples:
+111:dtype = torch.bfloat16
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/gpt_oss/configuration_gpt_oss.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/gpt2/configuration_gpt2.py
+32:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/gemma2/modeling_gemma2.py
+43:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/gemma2/configuration_gemma2.py
+22:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/exaone/configuration_exaone.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/exaone/modeling_exaone.py
+49:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/llava/modeling_llava.py
+123:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/paligemma/modeling_paligemma.py
+71:Examples:
+356:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/time_series_transformer/time_series_transformers_architecture.py
+37:def __init__(self, model, num_parallel_samples):
+39:self.decoder = TimeSeriesTransformersDecoderWrapper(model, num_parallel_samples)
+87:def __init__(self, model, num_parallel_samples):
+91:self.decoder = self.convert_to_rbln_tst_decoder(model, num_parallel_samples)
+94:def convert_to_rbln_tst_decoder(self, model: nn.Module, num_parallel_samples: int):
+97:self_attn = TimeSeriesTransformersSelfAttention(layer.self_attn, num_parallel_samples)
+98:cross_attn = TimeSeriesTransformersCrossAttention(layer.encoder_attn, num_parallel_samples)
+112:*self_kv_cache: torch.Tensor,  # batch_size * num_parallel_samples, num_heads, prediction_length, d_kv
+244:def __init__(self, attn, num_parallel_samples):
+254:self.num_parallel_samples = num_parallel_samples
+311:batch_size // self.num_parallel_samples,
+312:self.num_parallel_samples,
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/time_series_transformer/modeling_time_series_transformer.py
+33:from transformers.modeling_outputs import SampleTSPredictionOutput, Seq2SeqTSModelOutput
+131:self.num_parallel_samples = self.rbln_config.num_parallel_samples
+159:return TimeSeriesTransformersWrapper(model, rbln_config.num_parallel_samples)
+171:enc_example_inputs = enc_compile_config.get_dummy_inputs(fill=0)
+175:for (name, _, _), tensor in zip(enc_compile_config.input_info, enc_example_inputs, strict=False):
+180:dec_example_inputs = dec_compile_config.get_dummy_inputs(fill=0, static_tensors=static_tensors)
+183:for (name, _, _), tensor in zip(dec_compile_config.input_info, dec_example_inputs, strict=False):
+192:example_inputs=enc_example_inputs,
+201:example_inputs=dec_example_inputs,
+230:rbln_config.num_parallel_samples = rbln_config.num_parallel_samples or model_config.num_parallel_samples
+265:[rbln_config.batch_size * rbln_config.num_parallel_samples, 1, model_config.feature_size],
+294:* rbln_config.num_parallel_samples
+356:) -> SampleTSPredictionOutput:
+369:The model outputs. If return_dict=False is passed, returns a tuple of tensors. Otherwise, returns a SampleTSPredictionOutput object.
+386:num_parallel_samples = self.num_parallel_samples
+387:repeated_loc = loc.repeat_interleave(repeats=num_parallel_samples, dim=0)
+388:repeated_scale = scale.repeat_interleave(repeats=num_parallel_samples, dim=0)
+391:past_values.repeat_interleave(repeats=num_parallel_samples, dim=0) - repeated_loc
+396:repeated_features = features.repeat_interleave(repeats=num_parallel_samples, dim=0)
+399:future_samples = []
+423:next_sample = distr.sample()
+426:(repeated_past_values, (next_sample - repeated_loc) / repeated_scale), dim=1
+428:future_samples.append(next_sample)
+430:concat_future_samples = torch.cat(future_samples, dim=1)
+432:return SampleTSPredictionOutput(
+433:sequences=concat_future_samples.reshape(
+434:(-1, num_parallel_samples, self.config.prediction_length) + self._origin_model.target_shape,
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/time_series_transformer/configuration_time_series_transformer.py
+19:num_parallel_samples: Optional[int] = None,
+27:num_parallel_samples (Optional[int]): Number of samples to generate in parallel during prediction.
+41:self.num_parallel_samples = num_parallel_samples
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/colpali/modeling_colpali.py
+106:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/colpali/configuration_colpali.py
+30:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2_vl/modeling_qwen2_vl.py
+482:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2_vl/configuration_qwen2_vl.py
+69:the number of patches in a sequence for an image or video. For example, an image
+87:For example, a 224x224 image with a patch size of 14 results in (224 / 14) * (224 / 14) = 256 patches.
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/blip_2/modeling_blip_2.py
+295:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/seq2seq/modeling_seq2seq.py
+151:enc_example_inputs = enc_compile_config.get_dummy_inputs(fill=0)
+155:for (name, _, _), tensor in zip(enc_compile_config.input_info, enc_example_inputs, strict=False):
+160:dec_example_inputs = dec_compile_config.get_dummy_inputs(fill=0, static_tensors=static_tensors)
+163:for (name, _, _), tensor in zip(dec_compile_config.input_info, dec_example_inputs, strict=False):
+172:example_inputs=enc_example_inputs,
+181:example_inputs=dec_example_inputs,
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/colqwen2/modeling_colqwen2.py
+42:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/colqwen2/configuration_colqwen2.py
+29:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/mistral/configuration_mistral.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/mistral/modeling_mistral.py
+43:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/whisper/modeling_whisper.py
+119:Example (Short form):
+134:sampling_rate=ds[0]["audio"]["sampling_rate"],
+146:outputs = model.generate(input_features=input_features, return_timestamps=True)
+161:self.rbln_token_timestamps = self.rbln_config.token_timestamps
+210:rbln_token_timestamps=rbln_config.token_timestamps,
+223:enc_example_inputs = enc_compile_config.get_dummy_inputs(fill=0)
+227:for (name, _, _), tensor in zip(enc_compile_config.input_info, enc_example_inputs, strict=False):
+232:dec_example_inputs = dec_compile_config.get_dummy_inputs(fill=0, static_tensors=static_tensors)
+235:for (name, _, _), tensor in zip(dec_compile_config.input_info, dec_example_inputs, strict=False):
+244:example_inputs=enc_example_inputs,
+252:example_inputs=dec_example_inputs,
+449:if self.rbln_token_timestamps:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/whisper/configuration_whisper.py
+35:token_timestamps: bool = None,
+46:token_timestamps (bool, optional): Whether to output token timestamps during generation. Defaults to False.
+65:self.token_timestamps = token_timestamps or False
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/whisper/whisper_architecture.py
+27:def __init__(self, model, use_attention_mask, rbln_token_timestamps):
+30:model, use_attention_mask=use_attention_mask, output_attentions=rbln_token_timestamps
+147:# deocder's cross attention is used for token_timestamps
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/whisper/generation_whisper.py
+52:return_timestamps: Optional[bool] = None,
+53:return_token_timestamps: Optional[bool] = None,
+67:return_timestamps (bool, optional): Whether to return the timestamps with the text. For audios longer than 30 seconds, it is necessary to set return_timestamps=True.
+68:return_token_timestamps (bool, optional): Whether to return token timestamps.
+87:return_timestamps=return_timestamps,
+88:return_token_timestamps=return_token_timestamps,
+96:return_token_timestamps,
+109:if return_token_timestamps and not self.rbln_token_timestamps:
+111:"To use .generate() with return_token_timestamps=True, the model must be compiled with rbln_token_timestamps=True. "
+112:"You can compile the model by calling .from_pretrained() with export=True and rbln_token_timestamps=True as keyword arguments, "
+113:"or you can generate with return_token_timestamps=False."
+116:if return_token_timestamps and hasattr(generation_config, "alignment_heads"):
+124:seek_outputs["token_timestamps"] = self._extract_token_timestamps(
+131:seek_outputs["token_timestamps"] = self._extract_token_timestamps(
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/idefics3/modeling_idefics3.py
+198:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/mixtral/modeling_mixtral.py
+31:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/mixtral/configuration_mixtral.py
+22:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/decoderonly/decoderonly_architecture.py
+386:cache_pos_for_partitions = torch.clamp(cs - pidx * partition_len, 0, partition_len)
+392:cache_seq_len = torch.clamp(position_ids.to(torch.int32), max=max_cache_len)[:, :1]  # past seen tokens
+394:torch.clamp(position_ids, max=max_cache_len)[:, :1] + valid_input_len
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/decoderonly/configuration_lora.py
+22:Examples:
+70:decoder_outputs = model.generate(**inputs, max_new_tokens=64, do_sample=False)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/decoderonly/configuration_decoderonly.py
+368:dtype (str): Data type of the cache buffer ("float16", "float32", etc.).
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/decoderonly/modeling_decoderonly.py
+234:example_inputs,
+251:example_inputs=example_inputs,
+261:def _get_compile_context(cls, compile_config: RBLNCompileConfig, example_inputs: List[torch.Tensor]):
+266:for (name, _, _), tensor in zip(compile_config.input_info, example_inputs, strict=False):
+281:prefill_example_inputs = prefill_compile_config.get_dummy_inputs(fill=0, meta_tensor_names=meta_tensor_names)
+282:context, static_tensors = cls._get_compile_context(prefill_compile_config, prefill_example_inputs)
+288:prefill_example_inputs,
+297:image_prefill_example_inputs = image_prefill_compile_config.get_dummy_inputs(
+303:image_prefill_example_inputs,
+318:dec_example_inputs = dec_compile_config.get_dummy_inputs(fill=0, static_tensors=static_tensors)
+322:dec_example_inputs,
+455:#     Example implementation for a 'sliding_window' model:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/midm/modeling_midm.py
+48:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/midm/configuration_midm.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2_5_vl/configuration_qwen2_5_vl.py
+85:the number of patches in a sequence for an image or video. For example, an image
+107:For example, a 224x224 image with a patch size of 14 results in (224 / 14) * (224 / 14) = 256 patches.
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py
+591:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/llava_next/modeling_llava_next.py
+103:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/grounding_dino/grounding_dino_architecture.py
+233:text_encoder_attention_mask = text_encoder_attention_mask * torch.finfo(torch.float16).min
+416:sampling_offsets = self.sampling_offsets(hidden_states).view(
+429:sampling_grids = (
+432:+ sampling_offsets / offset_normalizer[None, None, None, :, None, :]
+439:offset_grids = sampling_offsets / self.n_points * ref_points_wh
+440:sampling_grids = ref_points_grids + offset_grids
+450:sampling_grids,
+500:attn_weights = torch.clamp(attn_weights, min=-50000, max=50000)
+506:text_attn_weights = torch.clamp(text_attn_weights, min=-50000, max=50000)
+525:mask = text_attention_mask * torch.finfo(torch.float16).min
+567:sampling_grids: Tensor,
+572:_, num_queries, num_heads, num_levels, num_points, _ = sampling_grids.shape
+574:sampling_value_list = []
+575:sampling_grids_list = [t.squeeze(3) for t in torch.split(sampling_grids, 1, dim=3)]
+580:sampling_grid_l_ = sampling_grids_list[level_id].transpose(1, 2).flatten(0, 1)
+581:sampling_value_l_ = torch.nn.functional.grid_sample(
+583:sampling_grid_l_,
+588:sampling_value_list.append(sampling_value_l_)
+590:sampling_values = torch.cat(sampling_value_list, dim=-1)
+592:values_permuted = sampling_values.permute(0, 2, 3, 1)
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/grounding_dino/modeling_grounding_dino.py
+299:# downsample pixel_mask to match shape of corresponding feature_map
+648:def down_sampled_size(x, depth: int = 1):
+651:return down_sampled_size((x + 1) // 2, depth - 1)
+663:[down_sampled_size(num_patched_h, out_layer - 1), down_sampled_size(num_patched_w, out_layer - 1)]
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2/configuration_qwen2.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen2/modeling_qwen2.py
+43:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_moe/modeling_qwen3_moe.py
+31:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_moe/configuration_qwen3_moe.py
+22:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/llama/configuration_llama.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/llama/modeling_llama.py
+40:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/phi/modeling_phi.py
+40:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/phi/configuration_phi.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/swin/modeling_swin.py
+95:output_hidden_states_before_downsampling: Optional[bool] = False,
+119:hidden_states_before_downsampling = layer_outputs[1]
+124:if output_hidden_states and output_hidden_states_before_downsampling:
+125:batch_size, _, hidden_size = hidden_states_before_downsampling.shape
+127:# here we use the original (not downsampled) height and width
+128:reshaped_hidden_state = hidden_states_before_downsampling.view(
+132:all_hidden_states += (hidden_states_before_downsampling,)
+134:elif output_hidden_states and not output_hidden_states_before_downsampling:
+175:output_hidden_states_before_downsampling=True,
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/gemma/configuration_gemma.py
+24:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/gemma/modeling_gemma.py
+40:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/t5/modeling_t5.py
+53:Examples:
+99:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3/configuration_qwen3.py
+24:Example usage:
+52:Example usage:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3/modeling_qwen3.py
+39:Examples:
+97:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl/configuration_qwen3_vl.py
+77:the number of patches in a sequence for an image or video. For example, an image
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/models/qwen3_vl/modeling_qwen3_vl.py
+602:example_layer = None
+604:example_layer = deepstack_image_embeds[0]
+606:example_layer = deepstack_video_embeds[0]
+607:hidden_size = int(example_layer.shape[-1])
+736:Examples:
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/utils/rbln_quantization.py
+83:precision: Optional[str] = None,
+89:if precision is not None:
+90:logger.warning("The `precision` argument is deprecated. Use `weights` and `activations` instead.")
+91:if any(precision_arg is not None for precision_arg in (weights, activations)):
+92:raise ValueError("`precision` and `weights` or `activations` cannot be set at the same time.")
+94:if precision == "w4a16":
+98:raise ValueError(f"Invalid precision: {precision}")
+214:# FIXME :: Currently rebel compiler does not support bfloat16 for quantized models.
+PRECISION_FILE /usr/local/lib/python3.13/dist-packages/optimum/rbln/transformers/utils/qlinear.py
+44:x_scale = torch.clamp(x_scale, min=finfo.eps)
+46:x = (x / x_scale).clamp(min=iinfo.min, max=iinfo.max)
+49:x = (x / self.input_scale).clamp(min=iinfo.min, max=iinfo.max)
+64:x = (x / self.input_scale).clamp(min=finfo.min, max=finfo.max)

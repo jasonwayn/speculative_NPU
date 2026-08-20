@@ -22,6 +22,19 @@ DFlash(block-diffusion speculative decoding)를 **Rebellions ATOM+ NPU** 로 포
 
 ## 2. 결과
 
+> ## ⚠️ 이 표들은 RoPE 결함 수정 **전** 수치입니다
+>
+> 긴 생성(MAXNEW=2048)에서 드래프터 정확도가 무너지는 결함을 2026-08-20 에
+> 찾아 고쳤습니다 — [ROPE_ROOT_CAUSE.md](ROPE_ROOT_CAUSE.md).
+> 아래 `slim_results` 표와 GPU 비교는 그 결함이 있는 상태에서 측정된 것이라
+> **NPU 쪽 tau 와 처리량이 실제보다 낮습니다.** 특히 math500 의 tau 4.295 는
+> 이 결함 때문일 가능성이 높습니다 (수정 후 5샘플 기준 7.293, GPU 는 6.661).
+>
+> 20샘플 재측정 전까지 이 표를 인용하지 마세요.
+> 수정 후 수치는 [results/rr_results/](../results/rr_results/),
+> [results/rr_long/](../results/rr_long/) 에 있습니다.
+
+
 ### DFlash 논문 워크로드 5종 (최종, NSAMP=20 / MAXNEW=2048 / 카드 1장 단독)
 
 | 데이터셋 | tau | draft | verify | lm_head | **라운드** | **tok/s** | **J/token** |
@@ -107,7 +120,7 @@ tok/s 격차가 데이터셋마다 다른 건 tau 차이 때문입니다.
 
 ---
 
-## 4. 적용한 최적화 5가지
+## 4. 적용한 최적화 6가지
 
 | | 내용 | 효과 |
 |---|---|---|
@@ -116,6 +129,7 @@ tok/s 격차가 데이터셋마다 다른 건 tau 차이 때문입니다.
 | ③ | **verify 청크 64 → 17** — 패딩 48칸 → 1칸 | verify 47.7 → 41.2 ms |
 | ④ | **prefill 청크 64 → 256** — ③과 캐시 공유 | prefill 호출 수 1/4 |
 | ⑤ | **hidden state 출력 37개 → 6개** | verify 41.2 → 38.8 ms |
+| ⑥ | **RoPE 각도 범위 축소를 호스트로** | 긴 생성에서 tau 1.93 → 6.16~6.46, 처리량 2.5~2.8배 |
 
 ②③④ 는 모두 **벤더가 파이썬 레벨에 걸어둔 방어적 검사**였고, 커널은 처음부터
 지원하고 있었습니다. ⑤ 는 벤더 래퍼가 `output_hidden_states=True` 일 때 37개를
@@ -126,7 +140,7 @@ tok/s 격차가 데이터셋마다 다른 건 tau 차이 때문입니다.
 
 ## 5. 알아낸 벤더 제약
 
-9가지를 [docs/VENDOR_LIMITS.md](docs/VENDOR_LIMITS.md) 에 정리했습니다. 요약:
+10가지를 [docs/VENDOR_LIMITS.md](docs/VENDOR_LIMITS.md) 에 정리했습니다. 요약:
 
 1. prefill 입력 길이가 청크 배수여야 한다는 검사 — **파이썬 전용, 우회 가능**
 2. 비정렬 prefix caching 금지 가드 — **`use_attention_mask=False` 면 무해, 우회 가능**
@@ -135,6 +149,9 @@ tok/s 격차가 데이터셋마다 다른 건 tau 차이 때문입니다.
 5. `decoder_batch_sizes` 가 작은 배치에서 깨짐 (`block_tables` shape 불일치)
 6. prefill 에 배치 차원이 없음
 7. 양자화(int4/int8)가 **조용히** 쓰레기를 뱉음 — 캘리브레이션 API 없음
+8. `output_hidden_states=True` 가 전 레이어를 호스트로 복사 — **우회 가능**
+9. `mark_static_address` 가 문서에 없는 3-인자 조합을 요구
+10. **`sin`/`cos` 가 인자 크기에 비례해 틀림** — CPU fp32 대비 최대 6천만 배, **우회 가능**
 
 가장 위험했던 건 제약이 아니라 **틀린 결과가 에러 없이 나오는 경우**였습니다.
 stateful draft 초기 구현에서 `q_len != k_len` 으로 PAGED attention 을 호출했더니

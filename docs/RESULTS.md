@@ -1,5 +1,18 @@
 # 측정 결과
 
+> ## ⚠️ 이 표들은 RoPE 결함 수정 **전** 수치입니다
+>
+> 긴 생성(MAXNEW=2048)에서 드래프터 정확도가 무너지는 결함을 2026-08-20 에
+> 찾아 고쳤습니다 — [ROPE_ROOT_CAUSE.md](ROPE_ROOT_CAUSE.md).
+> 아래 `slim_results` 표와 GPU 비교는 그 결함이 있는 상태에서 측정된 것이라
+> **NPU 쪽 tau 와 처리량이 실제보다 낮습니다.** 특히 math500 의 tau 4.295 는
+> 이 결함 때문일 가능성이 높습니다 (수정 후 5샘플 기준 7.293, GPU 는 6.661).
+>
+> 20샘플 재측정 전까지 이 표를 인용하지 마세요.
+> 수정 후 수치는 [results/rr_results/](../results/rr_results/),
+> [results/rr_long/](../results/rr_long/) 에 있습니다.
+
+
 원본 JSON 은 [results/](../results/) 에 있습니다.
 
 | 디렉토리 | 단계 |
