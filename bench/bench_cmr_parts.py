@@ -3,16 +3,21 @@ import os, json, time, threading, subprocess, math, torch
 from safetensors import safe_open
 
 class Power:
-    def __init__(s, dev, hz=5): s.dev = dev; s.hz = hz; s.on = False; s.rows = []
+    def __init__(s, dev, hz=5):
+        # dev 는 int 또는 list. TP 구성에서 카드 1장만 읽으면 에너지가 N배 과소 보고된다.
+        s.devs = [dev] if isinstance(dev, int) else list(dict.fromkeys(dev))
+        s.dev = s.devs[0]; s.hz = hz; s.on = False; s.rows = []
     def _loop(s):
         while s.on:
             try:
                 j = json.loads(subprocess.run(["rbln-stat", "--json"], capture_output=True,
                                               text=True, timeout=3).stdout)
-                d = j["devices"][s.dev]
+                ds = [j["devices"][i] for i in s.devs]
                 s.rows.append((time.time(),
-                               float(str(d["card_power"]).replace("uW", "")) / 1e6,
-                               float(str(d.get("temperature", "0C")).replace("C", ""))))
+                               sum(float(str(d["card_power"]).replace("uW", "")) / 1e6
+                                   for d in ds),
+                               max(float(str(d.get("temperature", "0C")).replace("C", ""))
+                                   for d in ds)))
             except Exception:
                 pass
             time.sleep(1.0 / s.hz)

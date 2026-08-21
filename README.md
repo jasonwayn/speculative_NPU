@@ -194,6 +194,11 @@ stateful draft 초기 구현에서 `q_len != k_len` 으로 PAGED attention 을 �
 | [run/](run/) | 실행/대기 셸 스크립트 |
 | [probes/](probes/) | 탐색용 일회성 프로브 (정리 안 됨, 기록용) |
 | [results/](results/) | 원본 측정 결과 JSON |
+| [docs/OPTIMIZATIONS.md](docs/OPTIMIZATIONS.md) | 최적화 6단계 상세 |
+| [docs/VENDOR_LIMITS.md](docs/VENDOR_LIMITS.md) | 벤더 제약 10가지 |
+| [docs/RESULTS.md](docs/RESULTS.md) | 전체 측정값 + GPU 비교 |
+| [docs/ROPE_ROOT_CAUSE.md](docs/ROPE_ROOT_CAUSE.md) | 긴 컨텍스트 정확도 결함의 원인·수정 |
+| [docs/LONG_CONTEXT_CMR.md](docs/LONG_CONTEXT_CMR.md) | 실제 코퍼스 길이별 tau 붕괴와 CMR (NPU↔GPU 대조) |
 
 ## 9. 재현
 
