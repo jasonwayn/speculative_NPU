@@ -22,6 +22,14 @@ DFlash(block-diffusion speculative decoding)를 **Rebellions ATOM+ NPU** 로 포
 
 ## 2. 결과
 
+> ## ⚠️ 아래 수치 전부가 OMP busy-wait 상태에서 측정됐습니다 (2026-08-21)
+>
+> 실행 스크립트가 쓰던 `NTHREADS=2` 가 스레드 수 곡선의 **최악점**이었습니다.
+> torch 의 OMP 스레드가 코어를 busy-wait 으로 붙잡아 RBLN 런타임이 굶습니다.
+> `OMP_WAIT_POLICY=PASSIVE KMP_BLOCKTIME=0` 만 붙이면 stock 은 **+8~9%**,
+> CMR 은 **2.4~3.9 배** 오릅니다. tau 는 안 바뀝니다.
+> → [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md)
+
 > ## ⚠️ 이 표들은 RoPE 결함 수정 **전** 수치입니다
 >
 > 긴 생성(MAXNEW=2048)에서 드래프터 정확도가 무너지는 결함을 2026-08-20 에
@@ -199,6 +207,7 @@ stateful draft 초기 구현에서 `q_len != k_len` 으로 PAGED attention 을 �
 | [docs/RESULTS.md](docs/RESULTS.md) | 전체 측정값 + GPU 비교 |
 | [docs/ROPE_ROOT_CAUSE.md](docs/ROPE_ROOT_CAUSE.md) | 긴 컨텍스트 정확도 결함의 원인·수정 |
 | [docs/LONG_CONTEXT_CMR.md](docs/LONG_CONTEXT_CMR.md) | 실제 코퍼스 길이별 tau 붕괴와 CMR (NPU↔GPU 대조) |
+| [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md) | CMR 오버헤드의 정체 — OMP busy-wait 이 RBLN 런타임을 굶긴다 |
 
 ## 9. 재현
 
