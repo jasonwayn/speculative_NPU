@@ -96,6 +96,47 @@ fp32 자리를 쓰면서 fp16 으로 계산한 것보다 나쁩니다.
 
 ---
 
+## 11. KV 캐시를 커스텀 어텐션 op 외의 연산으로 읽으면 짝 그래프 컴파일이 깨진다
+
+`prefill_17` 과 `prefill_256` 은 `CompileContext(use_weight_sharing=True)` 로 가중치를
+공유합니다. 청크 크기가 달라도 되지만, **한쪽 그래프에서 `past_key_values[i][0]` 을
+`torch.ops.rbln_custom_ops.paged_*` 가 아닌 연산으로 읽으면 다른 쪽 컴파일이 실패**합니다.
+
+| 구성 | 결과 |
+|---|---|
+| 두 그래프 다 점수 없음 | 둘 다 `COMPILE_OK` |
+| 청크 17 에만 점수 추가 | 17 OK, **256 FAIL** |
+| 청크 256 을 먼저 컴파일 | 256 OK, **17 FAIL** |
+| `use_weight_sharing=False`, TP1 | 둘 다 OK, **로드에서 `SYS_ENOMEM`** (가중치 2벌 16 GB > 15.7 GiB) |
+| `use_weight_sharing=False`, TP4 | **`RBLNCompileError: DEVICE_GRAPH_CONVERSION`** |
+
+순서와 무관하게 "두 번째" 가 죽습니다. 캐시를 아주 조금 읽는 것(`K[0,:,:640,0].mean(0)`)은
+통과하므로 접근 자체가 아니라 **가중치 공유 맵이 어긋나는 것**이 원인으로 보입니다.
+
+실용적 결론: **CMR 의 어텐션 점수 계산을 타깃 그래프 안으로 옮길 수 없습니다.**
+TP1 단일 그래프(청크 17 만)로는 컴파일·로드·실행이 다 되지만 프롬프트 프리필을
+17 토큰씩 964 회 돌아야 해서 프로덕션 구성이 아닙니다.
+자세한 조사 기록은 [HOST_THREAD_STARVATION.md](HOST_THREAD_STARVATION.md) §7.
+
+## 12. 5차원 브로드캐스트 `matmul` 이 컴파일러를 죽인다 — **우회 가능**
+
+GQA 확장을 브로드캐스트로 표현하면 `IndexError: map::at` 으로 죽습니다.
+`rep` 를 쿼리 쪽에 접어 평범한 3D `torch.bmm` 으로 쓰면 통과합니다. 같은 수학입니다.
+
+```python
+# 죽는다
+kb = K.view(1, nkv, 1, S, hd)
+a  = torch.matmul(q.view(1, nkv, rep, L, hd), kb.transpose(-1, -2))
+
+# 된다 (컴파일 96 s)
+qg = q.view(1, nkv, rep, L, hd).reshape(nkv, rep * L, hd)
+a  = torch.bmm(qg, K.view(nkv, S, hd).transpose(1, 2))
+```
+
+크기와 무관합니다 (컨텍스트를 2048 로 줄여도 동일하게 실패). K 를 `torch.clone` 해도
+같습니다. **K 가 상수 buffer 일 때는 5D 도 통과**하므로, 격리 테스트로는 재현되지
+않습니다 — 실제 그래프 입력으로 시험해야 합니다.
+
 ## 가장 위험한 부류 — 에러 없이 틀린 답
 
 제약 자체보다 이게 더 위험했습니다.

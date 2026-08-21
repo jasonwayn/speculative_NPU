@@ -92,8 +92,12 @@ class Scorer:
         N=16384 에서 137.0 -> 8.2 ms, 결과 오차 1e-10 (fp32 결합순서).
         """
         m = q.shape[0]
-        qg = q.view(m, s.nkv, s.rep, s.hd).permute(1, 2, 0, 3).reshape(s.nkv, s.rep * m, s.hd)
-        a = torch.matmul(qg, K.permute(1, 2, 0)) / math.sqrt(s.hd)   # [nkv, rep*m, N]
+        # SCORE_KV_GROUPS: 앞의 g 개 KV 그룹만 쓴다. TP4 에서 카드 하나가 보는 몫이
+        # nkv/4 = 2 그룹(=쿼리헤드 8개)이라, 그래프로 옮길 때 카드 간 all-reduce 없이
+        # 갈 수 있는지 확인하기 위한 스위치. 0 이면 전체.
+        g = int(os.environ.get("SCORE_KV_GROUPS", "0")) or s.nkv
+        qg = q.view(m, s.nkv, s.rep, s.hd)[:, :g].permute(1, 2, 0, 3).reshape(g, s.rep * m, s.hd)
+        a = torch.matmul(qg, K[:, :g].permute(1, 2, 0)) / math.sqrt(s.hd)   # [g, rep*m, N]
         return torch.softmax(a, dim=-1).mean(dim=(0, 1))
 
 
