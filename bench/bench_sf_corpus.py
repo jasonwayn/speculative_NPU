@@ -44,6 +44,9 @@ CMR = int(os.environ.get("CMR", "0"))
 # (CMR 가드 제거: 레이어 35 를 내보내는 그래프를 쓴다)
 CHUNK_SZ = int(os.environ.get("CMR_CHUNK", "32")); TOPK = int(os.environ.get("CMR_TOPK", "32"))
 EVERY = int(os.environ.get("CMR_EVERY", "4")); BUDGET = int(os.environ.get("CMR_BUDGET", "1024"))
+# 프리필에서 한 번만 검색하고 이후 스코어러를 전부 끈다. every 곡선이 64 까지
+# 꺾이지 않아(tau -0.4%, 처리량 1.59 배) 동적 검색의 값을 확인하려는 극한 케이스.
+CMR_ONCE = int(os.environ.get("CMR_ONCE", "0"))
 MAXC = int(os.environ.get("MAXC", "16384"))
 # 타깃 그래프를 컴파일할 때 쓴 max_seq_len. 기본은 드래프터 캐시와 동일.
 TARGET_MAX_SEQ = int(os.environ.get("TARGET_MAX_SEQ", str(MAXC)))
@@ -937,7 +940,7 @@ def run(warm=False):
             TL += nf.shape[1]; ctx_len += a + 1
             VRB[:, VL:VL + a + 1] = blk[:, :a + 1]; VL += a + 1
             bonus = int(post[0, a]); cached = (VL // CHUNK) * CHUNK
-            if CMR:
+            if CMR and not CMR_ONCE:
                 s = time.time()
                 _kn = scorer.keys(hs2[5][:, vl - c0:vl - c0 + a + 1],
                                   torch.arange(vl, vl + a + 1))
@@ -980,7 +983,7 @@ r = dict(mode="stateful", dset=DSET, cmr=CMR, inlen=INLEN,
          draft_ms=round(1000 * T["draft"] / n, 1), verify_ms=round(1000 * T["verify"] / n, 1),
          append_ms=round(1000 * T["append"] / n, 1), score_ms=round(1000 * T["score"] / n, 1),
          lmh_ms=round(1000 * T["lmh"] / n, 1), prefill_s=round(T["prefill"], 2),
-         retrievals=nret, kept_mean=round(kept / max(nret, 1), 1),
+         retrievals=nret, kept_mean=round(kept / max(nret, 1), 1), cmr_once=CMR_ONCE,
          decode_tok_s=round(ntok / max(st["wall_s"] - T["prefill"], 1e-6), 2), **st)
 print("SF " + json.dumps(r), flush=True)
 print("SF_DONE", flush=True)

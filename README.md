@@ -209,6 +209,7 @@ stateful draft 초기 구현에서 `q_len != k_len` 으로 PAGED attention 을 �
 | [docs/ROPE_ROOT_CAUSE.md](docs/ROPE_ROOT_CAUSE.md) | 긴 컨텍스트 정확도 결함의 원인·수정 |
 | [docs/LONG_CONTEXT_CMR.md](docs/LONG_CONTEXT_CMR.md) | 실제 코퍼스 길이별 tau 붕괴와 CMR (NPU↔GPU 대조) |
 | [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md) | CMR 오버헤드는 알고리즘이 아니라 호스트 구현이었다 (3.5—3.7 배) |
+| [docs/CMR_TUNING.md](docs/CMR_TUNING.md) | CMR 파라미터는 남의 드래프터 것이었다 — 동적 검색이 DFlash 에서 무의미 (1.67 배) |
 
 ## 9. 재현
 
