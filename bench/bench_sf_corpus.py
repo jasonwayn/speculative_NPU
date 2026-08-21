@@ -4,7 +4,14 @@
 GPU 와 공정한 비교가 된다. CMR 은 선택된 위치를 압축 위치로 캐시에 다시 기록해
 SpecExtend 의 위치 재인덱싱을 유지하고 어텐션 범위도 실제로 줄인다.
 """
-import sys, os, json, time, threading, subprocess, math, torch, rebel
+import sys, os
+# RBLN 런타임은 8 코어 머신에서 OS 스레드를 32 개 띄운다. torch 의 OMP 스레드가 병렬
+# 구간이 끝난 뒤에도 busy-wait 으로 코어를 붙잡으면 NPU 에 호출을 넣어줄 CPU 가 없어져
+# 호출이 스케줄링 대기에 걸린다. NTHREADS=2 는 그 곡선의 최악점이었다 (CMR 3.2 배 손해).
+# import torch 보다 먼저 설정해야 OMP 런타임이 읽는다. -> docs/HOST_THREAD_STARVATION.md
+os.environ.setdefault("OMP_WAIT_POLICY", "PASSIVE")
+os.environ.setdefault("KMP_BLOCKTIME", "0")
+import json, time, threading, subprocess, math, torch, rebel
 sys.path.insert(0, "/home/work/npu_work/dflash_work")
 sys.path.insert(0, "/home/work/npu_work/dflash_work/dflash")
 from torch import nn
@@ -497,10 +504,14 @@ def run(warm=False):
         _t0 = torch.cat([hs[i] for i in range(5)], dim=-1).to(DT); TL = _t0.shape[1]
         THB[:, :TL] = _t0; VRB[:, :P] = ids; VL = P
         cached = (P // CHUNK) * CHUNK
-        KST = None; sel = None; step = 0
+        KST = None; sel = None; step = 0; KSTB = None; KLEN = 0
         if CMR:
             s = time.time()
-            KST = scorer.keys(hs[5], torch.arange(P))
+            # 링버퍼로 미리 잡는다. torch.cat 으로 키우면 라운드마다 저장소 전체를
+            # 재할당한다 (16K 에서 67 MB). SpecExtend 도 init_caches 에서 미리 잡는다.
+            _k0 = scorer.keys(hs[5], torch.arange(P))
+            KSTB = torch.empty(CAP, _k0.shape[1], _k0.shape[2], dtype=_k0.dtype)
+            KSTB[:_k0.shape[0]] = _k0; KLEN = _k0.shape[0]; KST = KSTB[:KLEN]
             nq = min(B, P)
             q0 = scorer.queries(hs[5][:, P - nq:P], torch.arange(P - nq, P))
             sel, _ = pick_chunks(scorer.scores(q0, KST), TL, BUDGET, CHUNK_SZ, TOPK)
@@ -928,8 +939,10 @@ def run(warm=False):
             bonus = int(post[0, a]); cached = (VL // CHUNK) * CHUNK
             if CMR:
                 s = time.time()
-                KST = torch.cat([KST, scorer.keys(hs2[5][:, vl - c0:vl - c0 + a + 1],
-                                                  torch.arange(vl, vl + a + 1))], dim=0)
+                _kn = scorer.keys(hs2[5][:, vl - c0:vl - c0 + a + 1],
+                                  torch.arange(vl, vl + a + 1))
+                KSTB[KLEN:KLEN + _kn.shape[0]] = _kn
+                KLEN += _kn.shape[0]; KST = KSTB[:KLEN]
                 step += 1
                 if step % EVERY == 0:
                     q = scorer.queries(hs2[5][:, vl - c0:vl - c0 + a + 1],

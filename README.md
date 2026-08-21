@@ -22,12 +22,13 @@ DFlash(block-diffusion speculative decoding)를 **Rebellions ATOM+ NPU** 로 포
 
 ## 2. 결과
 
-> ## ⚠️ 아래 수치 전부가 OMP busy-wait 상태에서 측정됐습니다 (2026-08-21)
+> ## ⚠️ 아래 수치 전부가 호스트 병목 상태에서 측정됐습니다 (2026-08-21)
 >
-> 실행 스크립트가 쓰던 `NTHREADS=2` 가 스레드 수 곡선의 **최악점**이었습니다.
-> torch 의 OMP 스레드가 코어를 busy-wait 으로 붙잡아 RBLN 런타임이 굶습니다.
-> `OMP_WAIT_POLICY=PASSIVE KMP_BLOCKTIME=0` 만 붙이면 stock 은 **+8~9%**,
-> CMR 은 **2.4~3.9 배** 오릅니다. tau 는 안 바뀝니다.
+> 세 가지가 겹쳐 있었습니다 — (1) 실행 스크립트가 쓰던 `NTHREADS=2` 에서 torch OMP
+> 스레드가 코어를 busy-wait 으로 붙잡아 RBLN 런타임이 굶고, (2) 스코어러가 GQA 헤드를
+> 물리 복사하고(16K 에서 268 MB), (3) 키 저장소를 매 라운드 재할당했습니다.
+> 고친 뒤 stock 은 **+8~9%**, CMR 은 **3.5~3.7 배** 오릅니다. tau 는 안 바뀝니다.
+> **16384 에서 NPU 의 CMR 이 처음으로 순이득이 됐습니다** (stock 대비 1.02 / 1.09 배).
 > → [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md)
 
 > ## ⚠️ 이 표들은 RoPE 결함 수정 **전** 수치입니다
@@ -207,7 +208,7 @@ stateful draft 초기 구현에서 `q_len != k_len` 으로 PAGED attention 을 �
 | [docs/RESULTS.md](docs/RESULTS.md) | 전체 측정값 + GPU 비교 |
 | [docs/ROPE_ROOT_CAUSE.md](docs/ROPE_ROOT_CAUSE.md) | 긴 컨텍스트 정확도 결함의 원인·수정 |
 | [docs/LONG_CONTEXT_CMR.md](docs/LONG_CONTEXT_CMR.md) | 실제 코퍼스 길이별 tau 붕괴와 CMR (NPU↔GPU 대조) |
-| [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md) | CMR 오버헤드의 정체 — OMP busy-wait 이 RBLN 런타임을 굶긴다 |
+| [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md) | CMR 오버헤드는 알고리즘이 아니라 호스트 구현이었다 (3.5—3.7 배) |
 
 ## 9. 재현
 
