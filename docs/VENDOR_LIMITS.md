@@ -98,6 +98,12 @@ fp32 자리를 쓰면서 fp16 으로 계산한 것보다 나쁩니다.
 
 ## 11. KV 캐시를 커스텀 어텐션 op 외의 연산으로 읽으면 짝 그래프 컴파일이 깨진다
 
+> **2026-08-24 정정.** 이 항목의 전제였던 "두 그래프를 `CompileContext` 로 공유해야
+> 한다" 는 **우리 선택이 아니라 optimum-rbln 의 내부 경로**였습니다. `CompileContext`,
+> `use_weight_sharing`, `use_global_ctx` 는 **공식 문서에 없습니다.** 벤더가 문서화한
+> 방법은 **bucketing** 입니다 (§13). 따라서 아래는 "벤더 제약" 이 아니라
+> **"문서화되지 않은 내부 경로의 제약"** 으로 읽어야 합니다.
+
 `prefill_17` 과 `prefill_256` 은 `CompileContext(use_weight_sharing=True)` 로 가중치를
 공유합니다. 청크 크기가 달라도 되지만, **한쪽 그래프에서 `past_key_values[i][0]` 을
 `torch.ops.rbln_custom_ops.paged_*` 가 아닌 연산으로 읽으면 다른 쪽 컴파일이 실패**합니다.
@@ -114,9 +120,10 @@ fp32 자리를 쓰면서 fp16 으로 계산한 것보다 나쁩니다.
 통과하므로 접근 자체가 아니라 **가중치 공유 맵이 어긋나는 것**이 원인으로 보입니다.
 
 실용적 결론: **CMR 의 어텐션 점수 계산을 타깃 그래프 안으로 옮길 수 없습니다.**
-TP1 단일 그래프(청크 17 만)로는 컴파일·로드·실행이 다 되지만 프롬프트 프리필을
-17 토큰씩 964 회 돌아야 해서 프로덕션 구성이 아닙니다.
-자세한 조사 기록은 [HOST_THREAD_STARVATION.md](HOST_THREAD_STARVATION.md) §7.
+단, 막는 것은 이 항목이 아니라 **TP4 의 `DEVICE_GRAPH_CONVERSION` 실패**입니다.
+그쪽은 `use_weight_sharing=False` 로 **단일 컴파일에서** 터지므로 짝 그래프 구조와
+무관하고, bucketing 으로 바꿔도 남습니다.
+자세한 조사 기록은 [HOST_THREAD_STARVATION.md](HOST_THREAD_STARVATION.md) §4.1.
 
 ## 12. 5차원 브로드캐스트 `matmul` 이 컴파일러를 죽인다 — **우회 가능**
 
@@ -136,6 +143,38 @@ a  = torch.bmm(qg, K.view(nkv, S, hd).transpose(1, 2))
 크기와 무관합니다 (컨텍스트를 2048 로 줄여도 동일하게 실패). K 를 `torch.clone` 해도
 같습니다. **K 가 상수 buffer 일 때는 5D 도 통과**하므로, 격리 테스트로는 재현되지
 않습니다 — 실제 그래프 입력으로 시험해야 합니다.
+
+## 13. 여러 입력 shape 은 bucketing 이 정답이다 — **우리가 안 쓰고 있었다**
+
+`rebel.compile_from_torch` 는 `input_info` 에 **설정들의 리스트**를 받아 한 모델이
+여러 입력 shape 을 지원하게 합니다 ([공식 튜토리얼](https://docs.rbln.ai/latest/software/api/python/tutorial/advanced/bucketing.html)).
+
+```python
+input_infos = [ [("x", [1, 17, H], "float32")],
+                [("x", [1, 256, H], "float32")] ]
+cm = rebel.compile_from_torch(model, input_info=input_infos)
+rt = rebel.Runtime(cm, tensor_type="pt")   # 런타임 하나가 두 shape 을 자동 선택
+```
+
+실측 ([checks/bucket_mem.py](../checks/bucket_mem.py), 4096x4096 fp16 가중치 33.5 MB):
+
+| | 디바이스 할당 | 컨텍스트 | 실행기 |
+|---|---|---|---|
+| 버킷 1 개 (L17) | 44.0 MB | 1 | 1 |
+| 버킷 2 개 (L17, L256) | **56.6 MB** | 2 | 2 |
+| `CompileContext` 공유 #1 | 44.0 MB | 1 | 1 |
+| `CompileContext` 공유 #2 | 12.6 MB | 1 | 1 |
+| 공유 방식 합계 | **56.6 MB** | | |
+
+**두 방식의 디바이스 메모리가 동일합니다.** 둘 다 가중치를 한 벌만 올립니다
+(56.6 = 가중치 33.5 + L17 활성 10.5 + L256 활성 12.6). 저장 파일은 버킷마다
+가중치를 복제하지만(34 -> 69 MB) 디바이스에서는 공유됩니다.
+
+차이는 **버킷이 컴파일 1 회 / 런타임 1 개**라는 점이고, 그래서 §11 의 실패
+모드("두 번째 컴파일이 죽는다")가 구조적으로 존재하지 않습니다.
+
+> 우리는 optimum-rbln 이 쓰는 내부 경로(`CompileContext`)를 그대로 따라가느라
+> 이 기능을 몰랐습니다. **그래프 구조에 손댈 일이 생기면 bucketing 부터 보세요.**
 
 ## 가장 위험한 부류 — 에러 없이 틀린 답
 
