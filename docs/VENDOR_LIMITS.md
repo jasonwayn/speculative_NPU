@@ -21,10 +21,31 @@
 마지막 위치 하나의 logits 만 받을 수 있습니다. 여러 위치를 한 번에 검증하려면
 hidden state 를 받아서 별도 lm_head 그래프로 돌려야 합니다.
 
-## 4. argmax 컴파일 불가 / topk 실행 불가
+## 4. `topk` / `sort` 는 컴파일러를 죽인다 — argmax 는 **이제 된다**
 
-`argmax` 는 컴파일 단계에서 거부되고, `topk` 는 컴파일은 되는데 실행이 안 됩니다.
-샘플링은 호스트에서 해야 합니다.
+> **2026-08-24 재측정.** 이 항목의 기존 내용("argmax 컴파일 불가, topk 는 컴파일되나
+> 실행 불가")은 **둘 다 틀렸습니다.** 0.10.2 에서 다시 쟀습니다
+> ([checks/topk_one.py](../checks/topk_one.py), `N=640 K=32 fp32`).
+
+| op | 결과 |
+|---|---|
+| `torch.cumsum` | compile OK / run OK |
+| `torch.max(...).values` | compile OK / run OK |
+| **`torch.argmax`** | **compile OK / run OK, 값 일치** |
+| `torch.topk(...).values` | **세그폴트 (코어덤프)** |
+| `torch.topk(...).indices` | **세그폴트 (코어덤프)** |
+| `topk` 로 k 번째 값만 뽑아 임계 마스크 | **세그폴트 (코어덤프)** |
+| `torch.sort(...).indices` | **세그폴트 (코어덤프)** |
+
+**`topk` 은 "미지원" 이 아니라 `librbln.so` 안에서 프로세스가 죽습니다.** 파이썬 예외가
+아니라 코어 덤프라 `try/except` 로 못 잡습니다. `sort` 도 같고, **인덱스를 쓰지 않고
+k 번째 값으로 마스크만 만드는 우회로도 같이 죽습니다** — `topk` 이 그래프에 들어가는
+순간 끝입니다.
+
+`argmax` 가 되므로 **argmax + 마스킹 반복**으로 top-k 를 흉내낼 수는 있습니다
+(640 개 대상이면 연산은 사소하지만 그래프에 순차 K 단계가 들어갑니다). 시도해보지
+않았습니다 — [CMR_TUNING.md](CMR_TUNING.md) 의 `CMR_ONCE` 로 top-k 가 프리필에
+1 회만 돌게 되어 NPU 로 옮길 이유가 없어졌습니다.
 
 ## 5. `decoder_batch_sizes` 가 작은 배치에서 깨짐
 
