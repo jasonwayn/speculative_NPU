@@ -957,7 +957,10 @@ def run(warm=False):
                     ctx_len = sel.numel()
                 else:
                     T["score"] += time.time() - s
-            if any(int(t) in STOP for t in VRB[0, P:VL]): break
+            # 매 라운드 생성 토큰 전체를 파이썬으로 순회하고 있었다 (VL=1000 에서
+            # 0.585 ms, 라운드의 2.3%). 새로 수용된 a+1 개만 보면 된다 — 앞의 것은
+            # 이미 그 라운드에 검사했다. 0.585 -> 0.007 ms.
+            if any(int(t) in STOP for t in VRB[0, max(P, VL - (a + 1)):VL]): break
             if ctx_len >= MAXC - 2 * B: break
         ntok += VL - P
     return acc, ntok, T, nret, kept
