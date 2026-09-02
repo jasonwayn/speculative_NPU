@@ -197,6 +197,47 @@ rt = rebel.Runtime(cm, tensor_type="pt")   # 런타임 하나가 두 shape 을 �
 > 우리는 optimum-rbln 이 쓰는 내부 경로(`CompileContext`)를 그대로 따라가느라
 > 이 기능을 몰랐습니다. **그래프 구조에 손댈 일이 생기면 bucketing 부터 보세요.**
 
+## 13. 타깃이 적재된 뒤에는 raw `rebel.Runtime` 을 TP 로 못 만든다
+
+드래프터·lm_head 를 텐서 병렬로 쪼개려는 시도가 여기서 막혔습니다.
+
+**격리에서는 됩니다.** 타깃을 안 올린 상태에서 실제 `BlockRR` 모듈에 실제 캐시·
+`CompileContext` 까지 그대로 써서 측정했습니다 ([checks/probe_draft_tp_exec.py](../checks/probe_draft_tp_exec.py),
+[checks/probe_lmhead_tp.py](../checks/probe_lmhead_tp.py)).
+
+| | TP1 | TP2 | TP4 | 비고 |
+|---|---|---|---|---|
+| 드래프터 Block | 4.69 ms | 2.85 | **1.53** | 3.06 배, `cos 0.9998` |
+| lm_head | 4.65 ms | 2.91 | **2.09** | 2.22 배, argmax 결과 일치 |
+
+**통합에서는 배치와 무관하게 전부 실패합니다.**
+
+| 구성 | 결과 |
+|---|---|
+| 타깃 TP4 카드0-3 + 드래프터 TP1 카드0 | OK (`tau 5.115`, 179.88 tok/s) |
+| 타깃 TP4 카드0-3 + 드래프터 TP2 / TP4 | `RuntimeError: INIT_INTERNAL` |
+| 타깃 TP1 카드0 + 드래프터 TP2 카드2,3 | `INIT_INTERNAL` — **디바이스가 겹치지 않는데도** |
+| 타깃 TP2 카드0,1 + 드래프터 TP2 카드2,3 | `INIT_INTERNAL` — 완전 분리인데도 |
+
+디바이스 겹침도, "TP 그룹 두 개" 도 원인이 아닙니다 (세 번째 행은 TP 그룹이 하나뿐).
+남은 차이는 **`optimum-rbln` 이 타깃 런타임을 먼저 올렸다는 것** 뿐입니다.
+드래프터 TP 런타임을 타깃보다 먼저 만드는 순서 변경은 시도하지 않았습니다.
+
+**실용적으로는 우회할 이유도 약합니다.** 카드 4 장에서 드래프터에 카드를 주면
+타깃에서 빼앗아 오는데, `verify` 가 훨씬 커서 순손해입니다.
+
+```
+타깃TP4 / 드래프터TP1   verify 12.8  draft 4.8  lmh 4.3   합 23.0   ← 현재 최선
+타깃TP2 / 드래프터TP2   verify 24.2  draft 2.85 lmh 2.91  합 30.8
+```
+
+이득이 나는 유일한 구성은 **같은 4 장에 타깃 TP4 와 드래프터 TP4 를 함께** 올리는
+것인데, 그것이 첫 번째로 실패한 조합입니다.
+
+> `argmax` 를 lm_head 그래프에 넣는 것은 **N=151936 에서** `DEVICE_GRAPH_CONVERSION`
+> 으로 실패합니다. §4 에서 `argmax` 가 된다고 재측정한 것은 N=640 이었습니다 —
+> **크기 의존**입니다. 로짓을 호스트로 받아 argmax 하는 현행을 유지해야 합니다.
+
 ## 가장 위험한 부류 — 에러 없이 틀린 답
 
 제약 자체보다 이게 더 위험했습니다.

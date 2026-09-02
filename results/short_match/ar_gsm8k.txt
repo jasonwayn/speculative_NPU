@@ -1,0 +1,2 @@
+idle_W 83.02
+GPU2 {"dataset": "gsm8k", "mode": "ar", "dtype": "bfloat16", "samples": 3, "tau": null, "cycles": 0, "tokens": 677, "wall_s": 13.3, "P_mean": 189.01, "P_max": 221.91, "util_mean": 56.4, "E_J": 2486.6, "E_dyn_J": 1398.3, "T_start": 58.8, "T_end": 64.0, "T_max": 64.0, "T_mean": 61.5, "clk_mean": 2276.0, "clk_min": 2265.0, "tok_s": 50.9, "J_per_tok": 3.673, "Jdyn_per_tok": 2.065}
