@@ -341,9 +341,9 @@ def exs(info):
 
 t0 = time.time()
 _dtp = {"tensor_parallel_size": DRAFT_TP} if DRAFT_TP > 1 else {}
-cm_a = rebel.compile_from_torch(AppendRR(draft, KV_BLOCK_SIZE).eval(), input_info=ainfo(APPEND_WIDTH),
-                                example_inputs=exs(ainfo(APPEND_WIDTH)), compile_context=ctxc,
-                                **_dtp)
+# TP>1 에서는 순서가 생사를 가른다: append 를 먼저 만들면 뒤의 block 런타임이
+# INIT_INTERNAL 로 죽고, block 을 먼저 만들면 둘 다 산다 (TP2/TP4 동일,
+# checks/probe_append_tp3.py E/F). 컴파일·런타임 모두 block 먼저.
 # 같은 컨텍스트로 세 번째 그래프를 만들면 컴파일이 실패한다 -> Append 하나만 쓰고 반복 호출
 if NONCAUSAL_DRAFT:
     _block_module = _BlockNoncausal(draft, KV_BLOCK_SIZE).eval()
@@ -352,6 +352,9 @@ else:
                      if DRAFT_TRACE else BlockRR(draft, KV_BLOCK_SIZE).eval())
 cm_b = rebel.compile_from_torch(_block_module, input_info=binfo,
                                 example_inputs=exs(binfo), compile_context=ctxc,
+                                **_dtp)
+cm_a = rebel.compile_from_torch(AppendRR(draft, KV_BLOCK_SIZE).eval(), input_info=ainfo(APPEND_WIDTH),
+                                example_inputs=exs(ainfo(APPEND_WIDTH)), compile_context=ctxc,
                                 **_dtp)
 cm_r = None
 if READ_DRAFT_CACHE:
@@ -376,8 +379,8 @@ if STATELESS_CONTEXT:
         ],
     )
 print("COMPILED %.1fs  CMR=%d INLEN=%d" % (time.time() - t0, CMR, INLEN), flush=True)
-rt_a = rebel.Runtime(cm_a, tensor_type="pt", device=DRAFT_DEVICES)
 rt_b = rebel.Runtime(cm_b, tensor_type="pt", device=DRAFT_DEVICES)
+rt_a = rebel.Runtime(cm_a, tensor_type="pt", device=DRAFT_DEVICES)
 rrt = rebel.Runtime(cm_r, tensor_type="pt", device=DEV_DRAFT) if cm_r is not None else None
 lrt = rebel.Runtime(lcm, tensor_type="pt", device=LMH_DEVICES)
 srt = rebel.Runtime(scm, tensor_type="pt", device=DEV_DRAFT) if scm is not None else None
