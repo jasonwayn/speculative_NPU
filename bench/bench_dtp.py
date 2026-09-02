@@ -36,10 +36,16 @@ TARGET_TP = int(os.environ.get("TARGET_TP", "1"))
 # 드래프터·lm_head 도 가중치를 쪼갠다. 배치 1 에서 비용은 계산이 아니라 가중치를
 # 읽는 시간이므로, 일을 나누는 게 아니라 읽을 바이트를 나눠야 시간이 준다.
 DRAFT_TP = int(os.environ.get("DRAFT_TP", "1"))
+# lm_head 는 캐시도 CompileContext 도 없는 단독 그래프라 드래프터와 달리 TP4 가
+# 통합에서도 산다. 동일 조건 A/B 로 178.62 -> 204.78 tok/s (+14.6%), J/tok -14.7%.
+# 그래서 드래프터와 따로 준다 (VENDOR_LIMITS §14).
+LMH_TP = int(os.environ.get("LMH_TP", str(DRAFT_TP)))
 TARGET_DEVICES = (list(range(DEV_TARGET, DEV_TARGET + TARGET_TP))
                   if TARGET_TP > 1 else DEV_TARGET)
 DRAFT_DEVICES = (list(range(DEV_DRAFT, DEV_DRAFT + DRAFT_TP))
                  if DRAFT_TP > 1 else DEV_DRAFT)
+LMH_DEVICES = (list(range(DEV_DRAFT, DEV_DRAFT + LMH_TP))
+               if LMH_TP > 1 else DEV_DRAFT)
 TARGET_GRAPH_DIR = os.environ.get(
     "TARGET_GRAPH_DIR", "/home/work/npu_work/dflash_work/fused_17_256")
 MAXNEW = int(os.environ.get("MAXNEW", "256")); NSAMP = int(os.environ.get("NSAMP", "3"))
@@ -355,8 +361,9 @@ if READ_DRAFT_CACHE:
         example_inputs=caches[:2],
         compile_context=ctxc,
     )
+_ltp = {"tensor_parallel_size": LMH_TP} if LMH_TP > 1 else {}
 lcm = rebel.compile_from_torch(nn.Sequential(lmw).eval(),
-                              input_info=[("x", [1, B, H], DTS)], **_dtp)
+                              input_info=[("x", [1, B, H], DTS)], **_ltp)
 scm = None
 if STATELESS_CONTEXT:
     scm = rebel.compile_from_torch(
@@ -372,7 +379,7 @@ print("COMPILED %.1fs  CMR=%d INLEN=%d" % (time.time() - t0, CMR, INLEN), flush=
 rt_a = rebel.Runtime(cm_a, tensor_type="pt", device=DRAFT_DEVICES)
 rt_b = rebel.Runtime(cm_b, tensor_type="pt", device=DRAFT_DEVICES)
 rrt = rebel.Runtime(cm_r, tensor_type="pt", device=DEV_DRAFT) if cm_r is not None else None
-lrt = rebel.Runtime(lcm, tensor_type="pt", device=DRAFT_DEVICES)
+lrt = rebel.Runtime(lcm, tensor_type="pt", device=LMH_DEVICES)
 srt = rebel.Runtime(scm, tensor_type="pt", device=DEV_DRAFT) if scm is not None else None
 STOP = {tok.eos_token_id, 151645}
 DSET = os.environ.get("DSET", "gsm8k")
@@ -988,7 +995,7 @@ st = pw.stats(idle=IDLE)
 n = max(len(acc), 1)
 r = dict(mode="stateful", dset=DSET, cmr=CMR, inlen=INLEN,
          target_device=TARGET_DEVICES, target_tp=TARGET_TP,
-         draft_device=DRAFT_DEVICES, draft_tp=DRAFT_TP,
+         draft_device=DRAFT_DEVICES, draft_tp=DRAFT_TP, lmh_tp=LMH_TP,
          prompt_len=PROMPT_LEN or None,
          natural_long=NATURAL_LONG,
          samples=NSAMP, tau=round(sum(acc) / n, 3),
