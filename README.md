@@ -1,231 +1,519 @@
 # speculative_NPU
 
-DFlash(block-diffusion speculative decoding)를 **Rebellions ATOM+ NPU** 로 포팅하고
-정적 그래프 제약 아래에서 최적화한 작업 기록입니다.
+This repository documents my work on porting **DFlash**, a block-diffusion speculative decoding method, to the **Rebellions ATOM+ NPU** and optimizing it under a static-graph execution model.
 
-측정은 전부 **NPU 1장 단독** 실행입니다. prefill부터 decoding까지 target/drafter 모두
-같은 카드에서 돕니다.
+Unless stated otherwise, all NPU measurements were taken on a **single ATOM+ card**. Both the target model and the drafter run on the same card from prefill through decoding.
 
----
-
-## 1. 환경
-
-| 항목 | 값 |
-|---|---|
-| NPU | Rebellions ATOM+ (RBLN-CA22) × 4, 카드당 15.7 GiB |
-| 소프트웨어 | `rebel` / `optimum-rbln` / `rebel-compiler` 0.10.2, torch 2.9.1+cpu, Python 3.13 |
-| 타깃 | Qwen3-4B (fp16), `max_seq_len` 4096 |
-| 드래프터 | DFlash 5레이어, 블록 크기 B=16 |
-| 측정 실측치 | weight streaming 약 225 GB/s, dispatch 약 61 µs, idle 17–18 W / load 48–69 W |
+The main goal of this project was not just to make DFlash run on the NPU, but to understand what actually limits speculative decoding on a compiled accelerator: static graph shapes, KV-cache handling, weight streaming, host overhead, runtime restrictions, and numerical correctness.
 
 ---
 
-## 2. 결과
+## 1. Setup
 
-> ## ⚠️ 아래 수치 전부가 호스트 병목 상태에서 측정됐습니다 (2026-08-21)
->
-> 세 가지가 겹쳐 있었습니다 — (1) 실행 스크립트가 쓰던 `NTHREADS=2` 에서 torch OMP
-> 스레드가 코어를 busy-wait 으로 붙잡아 RBLN 런타임이 굶고, (2) 스코어러가 GQA 헤드를
-> 물리 복사하고(16K 에서 268 MB), (3) 키 저장소를 매 라운드 재할당했습니다.
-> 고친 뒤 stock 은 **+8~9%**, CMR 은 **3.5~3.7 배** 오릅니다. tau 는 안 바뀝니다.
-> **16384 에서 NPU 의 CMR 이 처음으로 순이득이 됐습니다** (stock 대비 1.02 / 1.09 배).
-> → [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md)
+| Item                              | Configuration                                                                          |
+| --------------------------------- | -------------------------------------------------------------------------------------- |
+| NPU                               | Rebellions ATOM+ (RBLN-CA22) × 4, 15.7 GiB per card                                    |
+| Software                          | `rebel` / `optimum-rbln` / `rebel-compiler` 0.10.2, PyTorch 2.9.1+cpu, Python 3.13     |
+| Target model                      | Qwen3-4B, fp16, `max_seq_len=4096`                                                     |
+| Drafter                           | DFlash, 5 layers, block size B=16                                                      |
+| Measured hardware characteristics | ~225 GB/s weight streaming, ~61 µs dispatch overhead, 17–18 W idle, 48–69 W under load |
 
-> ## ⚠️ 이 표들은 RoPE 결함 수정 **전** 수치입니다
->
-> 긴 생성(MAXNEW=2048)에서 드래프터 정확도가 무너지는 결함을 2026-08-20 에
-> 찾아 고쳤습니다 — [ROPE_ROOT_CAUSE.md](ROPE_ROOT_CAUSE.md).
-> 아래 `slim_results` 표와 GPU 비교는 그 결함이 있는 상태에서 측정된 것이라
-> **NPU 쪽 tau 와 처리량이 실제보다 낮습니다.** 특히 math500 의 tau 4.295 는
-> 이 결함 때문일 가능성이 높습니다 (수정 후 5샘플 기준 7.293, GPU 는 6.661).
->
-> 20샘플 재측정 전까지 이 표를 인용하지 마세요.
-> 수정 후 수치는 [results/rr_results/](../results/rr_results/),
-> [results/rr_long/](../results/rr_long/) 에 있습니다.
+---
 
+## 2. Important notes about the reported results
 
-### DFlash 논문 워크로드 5종 (최종, NSAMP=20 / MAXNEW=2048 / 카드 1장 단독)
+Two issues were discovered after the first round of experiments.
 
-| 데이터셋 | tau | draft | verify | lm_head | **라운드** | **tok/s** | **J/token** |
-|---|---|---|---|---|---|---|---|
-| gsm8k | 5.840 | 5.3 | 38.8 | 9.0 | **59.5 ms** | **98.12** | **0.593** |
-| humaneval | 6.258 | 5.2 | 39.1 | 9.0 | **59.9** | **104.45** | **0.561** |
-| math500 | 4.295 | 5.7 | 39.7 | 9.0 | **62.0** | **69.32** | **0.832** |
-| mbpp | 5.730 | 5.4 | 39.8 | 9.2 | **62.6** | **91.51** | **0.633** |
-| mt-bench | 2.287 | 5.6 | 40.1 | 9.1 | **62.6** | **36.51** | **1.570** |
+### Host-side bottlenecks
 
-**라운드 시간이 데이터셋과 무관하게 59~63 ms 로 평평합니다.** tok/s 차이는 전부 tau 차이입니다
-(mt-bench 가 느린 건 하드웨어가 아니라 tau 2.287 때문).
+The original measurements were affected by three host-side problems:
 
-### 최적화 단계별 (gsm8k)
+1. `NTHREADS=2` caused PyTorch OpenMP threads to busy-wait and starve the RBLN runtime.
+2. The scorer physically copied GQA heads, reaching 268 MB at a 16K context.
+3. Key-storage buffers were reallocated every decoding round.
 
-| | 원본 | +드래프터 KV캐시 | +비정렬 재개 | +이중 그래프 | **+출력 슬라이싱** |
-|---|---|---|---|---|---|
-| draft | 15.7 ms | 5.4 | 5.2 | 5.3 | 5.3 |
-| verify | 63.8 | 63.4 | 47.7 | 41.2 | **38.8** |
-| lm_head | 9.2 | 9.1 | 8.9 | 8.9 | 9.0 |
-| **라운드** | 96.5 ms | 86.5 | 67.3 | 62.3 | **59.5** |
-| tau | 4.628 | 5.699 | 5.699 | 5.84 | 5.84 |
-| **tok/s** | 47.96 | 65.86 | 84.71 | 93.77 | **98.12** |
-| J/token | 1.236 | 0.917 | 0.732 | 0.611 | **0.593** |
+After fixing them, stock execution improved by roughly **8–9%**, while CMR improved by **3.5–3.7×**. The acceptance length, `tau`, did not change.
 
-**라운드 96.5 → 59.5 ms (1.62배), 처리량 2.05배, 토큰당 에너지 2.08배 개선.**
+At a context length of 16,384, NPU CMR became beneficial for the first time, reaching approximately **1.02× to 1.09×** the stock throughput.
 
-math500 은 라운드 126.1 → 62.0 ms (2.03배), mt-bench 는 89.3 → 62.6 ms (1.43배).
+See:
 
-> ⚠️ tok/s 는 tau 변화를 포함합니다. 이중 그래프 단계에서 tau 가 바뀌었으므로
-> 하드웨어 이득만 보려면 **라운드 시간** 열을 보세요. [docs/RESULTS.md](docs/RESULTS.md) 참고.
+`docs/HOST_THREAD_STARVATION.md`
 
-### GPU 대비 (RTX PRO 6000 Blackwell) — 동일 조건 실측
+### RoPE correctness issue
 
-2026-08-19, GPU 완전 유휴 상태에서 NPU 와 같은 설정(20샘플, MAXNEW 2048, B=16, 배치 1)으로 측정.
+I also found a long-generation accuracy bug in the compiled trigonometric operations used by RoPE.
 
-| 데이터셋 | NPU tok/s | GPU tok/s | 격차 | NPU 라운드 | GPU 라운드 | NPU J/tok | GPU J/tok |
-|---|---|---|---|---|---|---|---|
-| gsm8k | 98.12 | 257.26 | 2.6× | 59.5 ms | 22.9 ms | **0.593** | 0.692 |
-| humaneval | 104.45 | 296.80 | 2.8× | 59.9 | 20.9 | **0.561** | 0.721 |
-| mbpp | 91.51 | 276.38 | 3.0× | 62.6 | 20.4 | **0.633** | 0.792 |
-| mt-bench | 36.51 | 116.52 | 3.2× | 62.6 | 20.8 | **1.570** | 1.965 |
-| math500 | 69.32 | 310.46 | 4.5× | 62.0 | 21.5 | 0.832 | **0.668** |
+Before the fix, drafter quality degraded as generation became longer. This reduced `tau` and therefore made NPU throughput look worse than it actually was.
 
-**라운드 시간 격차는 5종 전부 2.7~3.0배로 일정합니다.** (최적화 전에는 4.6배였습니다.)
-tok/s 격차가 데이터셋마다 다른 건 tau 차이 때문입니다.
+For example, on `math500`:
 
-**토큰당 에너지는 5종 중 4종에서 NPU 가 이깁니다** (1.17~1.29배). 전력이
-57 W vs 180~230 W 라 처리량 격차를 상쇄합니다.
+* old NPU `tau`: **4.295**
+* corrected NPU `tau`, preliminary 5-sample result: **7.293**
+* GPU `tau`: **6.661**
 
-**NPU DFlash 가 GPU 자기회귀보다 빠릅니다.**
+The older `slim_results` tables and the GPU comparison below were measured before this fix. They are kept here as historical optimization results, but should not be used as final post-fix performance numbers.
 
-| gsm8k | 처리량 | J/token | 전력 |
-|---|---|---|---|
-| GPU 자기회귀 | 69.01 tok/s | 3.724 | 258 W |
-| **NPU DFlash** | **98.12** | **0.593** | **57 W** |
+Corrected measurements are stored under:
 
-1.42배 빠르고 에너지는 6.3배 적습니다. (GPU 에서 DFlash 자체의 speedup 은 3.73배.)
+* `results/rr_results/`
+* `results/rr_long/`
 
-> ⚠️ **math500 만 tau 가 안 맞습니다** — NPU 4.295 vs GPU 6.661 (55% 차이).
-> 나머지 4종은 1~5% 안에서 일치합니다. tau 는 하드웨어 무관해야 하므로 원인 규명이
-> 필요합니다. 후보: fp16(NPU) vs bf16(GPU) 정밀도, NPU 하네스의 `MAXC=4096` 컨텍스트
-> 상한 (math500 이 출력이 가장 긴 데이터셋). **math500 의 4.5배 격차는 이 tau 차이
-> 때문이지 하드웨어 때문이 아닙니다** (라운드로는 2.9배로 다른 데이터셋과 같음).
+Details of the bug are in:
 
-### 이론 상한
+`docs/ROPE_ROOT_CAUSE.md`
 
-라운드당 9.11 GB 를 읽어야 하고 실측 대역폭이 225 GB/s 이므로 **읽기만 40.5 ms** 입니다.
-현재 라운드 59.5 ms 는 그 바닥의 **68%** 지점이고, 완전 최적화 상한은 약 144 tok/s 입니다.
+---
 
-## 3. 최종 구조 — 3단계 정적 그래프
+## 3. DFlash performance on ATOM+
 
+The following table uses the original 20-sample DFlash paper workloads with `MAXNEW=2048`, B=16, and one NPU card.
+
+These measurements are useful for comparing the optimization stages, but the `tau` and throughput values were collected before the RoPE fix described above.
+
+| Dataset   |   tau |  Draft |  Verify | lm_head |       Round |      tok/s |   J/token |
+| --------- | ----: | -----: | ------: | ------: | ----------: | ---------: | --------: |
+| gsm8k     | 5.840 | 5.3 ms | 38.8 ms |  9.0 ms | **59.5 ms** |  **98.12** | **0.593** |
+| humaneval | 6.258 |    5.2 |    39.1 |     9.0 |    **59.9** | **104.45** | **0.561** |
+| math500   | 4.295 |    5.7 |    39.7 |     9.0 |    **62.0** |  **69.32** | **0.832** |
+| mbpp      | 5.730 |    5.4 |    39.8 |     9.2 |    **62.6** |  **91.51** | **0.633** |
+| mt-bench  | 2.287 |    5.6 |    40.1 |     9.1 |    **62.6** |  **36.51** | **1.570** |
+
+One useful observation is that the **round time stays almost flat at 59–63 ms across all five datasets**.
+
+The large throughput differences mainly come from differences in `tau`, or the number of accepted tokens per speculative round. For example, `mt-bench` is not slow because the hardware takes longer to execute a round. Its round time is almost identical to the other workloads, but its `tau` is only 2.287.
+
+---
+
+## 4. Optimization progress
+
+The table below shows the main optimization steps on `gsm8k`.
+
+|           |    Original | + Drafter KV cache | + Unaligned resume | + Dual graph | + Output slicing |
+| --------- | ----------: | -----------------: | -----------------: | -----------: | ---------------: |
+| Draft     |     15.7 ms |                5.4 |                5.2 |          5.3 |          **5.3** |
+| Verify    |        63.8 |               63.4 |               47.7 |         41.2 |         **38.8** |
+| lm_head   |         9.2 |                9.1 |                8.9 |          8.9 |          **9.0** |
+| **Round** | **96.5 ms** |               86.5 |               67.3 |         62.3 |      **59.5 ms** |
+| tau       |       4.628 |              5.699 |              5.699 |        5.840 |            5.840 |
+| **tok/s** |       47.96 |              65.86 |              84.71 |        93.77 |        **98.12** |
+| J/token   |       1.236 |              0.917 |              0.732 |        0.611 |        **0.593** |
+
+For `gsm8k`, the final implementation reduced the decoding round from **96.5 ms to 59.5 ms**, a **1.62× reduction in round latency**.
+
+Measured throughput increased from **47.96 to 98.12 tok/s**, and energy per generated token dropped from **1.236 to 0.593 J/token**.
+
+The throughput improvement is larger than the raw latency improvement because `tau` also changed during the optimization process. For hardware-only comparisons, **round latency is the more meaningful metric**.
+
+Other workloads showed similar latency improvements:
+
+* `math500`: **126.1 → 62.0 ms**
+* `mt-bench`: **89.3 → 62.6 ms**
+
+More detailed measurements are in:
+
+`docs/RESULTS.md`
+
+---
+
+## 5. Comparison with an RTX PRO 6000 Blackwell
+
+For comparison, I ran the same DFlash configuration on an **RTX PRO 6000 Blackwell** with 20 samples, `MAXNEW=2048`, B=16, and batch size 1.
+
+The GPU was otherwise idle during measurement.
+
+Again, the NPU results in this table were measured before the RoPE fix, so throughput comparisons involving `tau`, especially `math500`, should be treated with caution.
+
+| Dataset   | NPU tok/s | GPU tok/s | Throughput gap | NPU round | GPU round | NPU J/token | GPU J/token |
+| --------- | --------: | --------: | -------------: | --------: | --------: | ----------: | ----------: |
+| gsm8k     |     98.12 |    257.26 |           2.6× |   59.5 ms |   22.9 ms |   **0.593** |       0.692 |
+| humaneval |    104.45 |    296.80 |           2.8× |      59.9 |      20.9 |   **0.561** |       0.721 |
+| mbpp      |     91.51 |    276.38 |           3.0× |      62.6 |      20.4 |   **0.633** |       0.792 |
+| mt-bench  |     36.51 |    116.52 |           3.2× |      62.6 |      20.8 |   **1.570** |       1.965 |
+| math500   |     69.32 |    310.46 |           4.5× |      62.0 |      21.5 |       0.832 |   **0.668** |
+
+The more stable comparison is round latency.
+
+Across the five workloads, the NPU round is consistently about **2.7–3.0× slower** than the GPU round. Before the NPU optimizations, this gap was approximately 4.6×.
+
+The throughput gap varies more because it also depends on `tau`.
+
+Energy tells a different story. In these measurements, the NPU consumed less energy per generated token on four of the five datasets. The NPU generally ran around 57 W, while the GPU consumed roughly 180–230 W during DFlash execution.
+
+### DFlash on NPU vs. autoregressive decoding on GPU
+
+An interesting comparison is NPU DFlash against normal autoregressive generation on the GPU.
+
+| System             |      Throughput |   J/token |    Power |
+| ------------------ | --------------: | --------: | -------: |
+| GPU autoregressive |     69.01 tok/s |     3.724 |    258 W |
+| **NPU DFlash**     | **98.12 tok/s** | **0.593** | **57 W** |
+
+On this `gsm8k` measurement, NPU DFlash was **1.42× faster** than GPU autoregressive decoding while using about **6.3× less energy per token**.
+
+For reference, DFlash itself gave a **3.73× speedup** over autoregressive decoding on the GPU.
+
+### The old `math500` discrepancy
+
+Before fixing RoPE, `math500` had a large mismatch in `tau`:
+
+* NPU: 4.295
+* GPU: 6.661
+
+The other four datasets were within roughly 1–5%.
+
+Since `tau` should mostly depend on model behavior rather than accelerator speed, this was a sign that something was wrong with the NPU execution rather than a hardware performance difference.
+
+The later RoPE investigation confirmed a numerical problem during long generation. After the fix, preliminary NPU measurements reached a `tau` of 7.293.
+
+This means the old **4.5× `math500` throughput gap should not be interpreted as an NPU hardware gap**. The corresponding round-time gap was only about 2.9×, consistent with the other datasets.
+
+---
+
+## 6. Where the NPU time goes
+
+The target model streams its weights from device memory during execution.
+
+A decoding round reads approximately **9.11 GB** of weights. With a measured streaming bandwidth of approximately **225 GB/s**, weight reads alone require around:
+
+```text
+9.11 GB / 225 GB/s ≈ 40.5 ms
 ```
-[1] target prefill      input_ids [1, 256]        샘플당 1회
-[2] drafter             Append th [1,16,12800] -> 캐시 기록
-                        Block  noise [1,16,2560] -> 15개 제안
-[3] target verify       input_ids [1, 17]         라운드마다, 16토큰 + 패딩 1
+
+The optimized `gsm8k` round takes **59.5 ms**.
+
+This means a large part of the remaining latency is already close to the weight-streaming floor. Under the same model and decoding structure, the rough fully optimized upper bound is around **144 tok/s**.
+
+This also explains why reducing graph size indefinitely does not help: smaller graphs increase the number of executions, but each execution still has to pay a substantial weight-streaming cost.
+
+---
+
+## 7. Final execution structure
+
+The final implementation uses three main static-graph stages.
+
+```text
+[1] Target prefill
+    input_ids [1, 256]
+    Executed once per sample
+
+[2] Drafter
+    Append: hidden state [1, 16, 12800] -> update drafter KV cache
+    Block:  noise [1, 16, 2560]        -> generate 15 proposals
+
+[3] Target verify
+    input_ids [1, 17]
+    Executed every speculative round
+    16 candidate tokens + 1 padding position
 ```
 
-- **[1] 과 [3] 은 청크 크기가 다르지만 같은 KV 캐시를 공유합니다.** (`cos 0.999982` 검증)
-- 드래프터는 Append/Block 두 그래프가 자체 KV 캐시를 공유합니다.
-- KV 캐시는 target `[1,8,4096,128] × 72`, drafter `× 10` 로 디바이스 상주.
+The target prefill and target verification graphs use different input chunk sizes, but **share the same target KV cache**.
+
+I verified numerical consistency between the two paths with cosine similarity:
+
+```text
+cosine similarity = 0.999982
+```
+
+The drafter uses separate Append and Block graphs, which share their own KV cache.
+
+The KV caches remain resident on the device:
+
+```text
+Target:
+[1, 8, 4096, 128] × 72
+
+Drafter:
+[1, 8, 4096, 128] × 10
+```
+
+This structure allows the decoding loop to remain dynamic at the algorithm level while each individual accelerator graph stays statically compiled.
 
 ---
 
-## 4. 적용한 최적화 6가지
+## 8. Optimizations
 
-| | 내용 | 효과 |
-|---|---|---|
-| ① | **드래프터 KV 캐시 상주** — 컨텍스트를 매 라운드 재전송하지 않음 | draft 15.7 → 5.4 ms (16K 컨텍스트에선 158.9 → 13.6 ms) |
-| ② | **비정렬 재개** — 청크 배수가 아닌 오프셋에서 재개, 꼬리 재계산 제거 | verify 63.4 → 47.7 ms |
-| ③ | **verify 청크 64 → 17** — 패딩 48칸 → 1칸 | verify 47.7 → 41.2 ms |
-| ④ | **prefill 청크 64 → 256** — ③과 캐시 공유 | prefill 호출 수 1/4 |
-| ⑤ | **hidden state 출력 37개 → 6개** | verify 41.2 → 38.8 ms |
-| ⑥ | **RoPE 각도 범위 축소를 호스트로** | 긴 생성에서 tau 1.93 → 6.16~6.46, 처리량 2.5~2.8배 |
+### 1. Keep the drafter KV cache on device
 
-②③④ 는 모두 **벤더가 파이썬 레벨에 걸어둔 방어적 검사**였고, 커널은 처음부터
-지원하고 있었습니다. ⑤ 는 벤더 래퍼가 `output_hidden_states=True` 일 때 37개를
-전부 호스트로 내보내던 것을 실제로 쓰는 6개로 줄인 것입니다.
-상세는 [docs/OPTIMIZATIONS.md](docs/OPTIMIZATIONS.md).
+The initial implementation resent the drafter context every round.
+
+Making the drafter stateful and keeping its KV cache resident reduced draft latency from:
+
+```text
+15.7 ms -> 5.4 ms
+```
+
+At a 16K context, the effect was much larger:
+
+```text
+158.9 ms -> 13.6 ms
+```
+
+This was one of the most important changes for making long-context speculative decoding practical.
+
+### 2. Resume from unaligned offsets
+
+The original wrapper only allowed prefix-cache reuse at chunk-aligned positions.
+
+This forced the model to recompute the tail of the previous chunk whenever the accepted prefix ended at an arbitrary position.
+
+The underlying kernel did not actually require this restriction.
+
+After bypassing the Python-side guard, verification latency dropped from:
+
+```text
+63.4 ms -> 47.7 ms
+```
+
+### 3. Reduce the verify chunk from 64 to 17
+
+DFlash proposes at most 16 tokens per round.
+
+With a verify graph of length 64, most of the graph was padding. I compiled a 17-token verify graph instead:
+
+```text
+16 proposed tokens + 1 extra position
+```
+
+Verification latency dropped further:
+
+```text
+47.7 ms -> 41.2 ms
+```
+
+### 4. Increase the prefill chunk from 64 to 256
+
+The verify graph benefits from being small, but prefill benefits from fewer invocations.
+
+I therefore compiled target graphs with different sequence lengths while sharing the same KV cache:
+
+```text
+Prefill: 256 tokens
+Verify:   17 tokens
+```
+
+The larger prefill chunk reduced the number of prefill calls by 4× without forcing verification to use a large graph.
+
+### 5. Return only the hidden states DFlash needs
+
+With `output_hidden_states=True`, the vendor wrapper returned hidden states from all 37 layers to the host.
+
+DFlash only needed six of them.
+
+Reducing the outputs from:
+
+```text
+37 hidden states -> 6 hidden states
+```
+
+reduced verify latency from:
+
+```text
+41.2 ms -> 38.8 ms
+```
+
+This was mostly unnecessary device-to-host output traffic introduced by the wrapper rather than a limitation of the accelerator itself.
+
+### 6. Move RoPE angle reduction to the host
+
+Long-generation experiments showed that compiled `sin` and `cos` operations became numerically inaccurate for large input values.
+
+The error grew with the magnitude of the trigonometric input and eventually destroyed drafter accuracy.
+
+I moved the angle-range reduction step to the host before sending values into the compiled graph.
+
+For long generation, this recovered `tau` from approximately:
+
+```text
+1.93 -> 6.16–6.46
+```
+
+and improved throughput by roughly:
+
+```text
+2.5–2.8×
+```
+
+The full root-cause analysis is in:
+
+`docs/ROPE_ROOT_CAUSE.md`
 
 ---
 
-## 5. 알아낸 벤더 제약
+## 9. Vendor/runtime limitations found during the port
 
-10가지를 [docs/VENDOR_LIMITS.md](docs/VENDOR_LIMITS.md) 에 정리했습니다. 요약:
+I documented ten main issues in:
 
-1. prefill 입력 길이가 청크 배수여야 한다는 검사 — **파이썬 전용, 우회 가능**
-2. 비정렬 prefix caching 금지 가드 — **`use_attention_mask=False` 면 무해, 우회 가능**
-3. `logits_to_keep > 1` 미지원
-4. argmax 컴파일 불가 / topk 실행 불가
-5. `decoder_batch_sizes` 가 작은 배치에서 깨짐 (`block_tables` shape 불일치)
-6. prefill 에 배치 차원이 없음
-7. 양자화(int4/int8)가 **조용히** 쓰레기를 뱉음 — 캘리브레이션 API 없음
-8. `output_hidden_states=True` 가 전 레이어를 호스트로 복사 — **우회 가능**
-9. `mark_static_address` 가 문서에 없는 3-인자 조합을 요구
-10. **`sin`/`cos` 가 인자 크기에 비례해 틀림** — CPU fp32 대비 최대 6천만 배, **우회 가능**
+`docs/VENDOR_LIMITS.md`
 
-가장 위험했던 건 제약이 아니라 **틀린 결과가 에러 없이 나오는 경우**였습니다.
-stateful draft 초기 구현에서 `q_len != k_len` 으로 PAGED attention 을 호출했더니
-에러 없이 `cos 0.57` 이 나왔습니다.
+The short version is:
+
+1. **Prefill length must be a chunk multiple**
+
+   * Python-side check only
+   * underlying kernel can run without it
+
+2. **Unaligned prefix-cache resume is rejected**
+
+   * harmless with `use_attention_mask=False`
+   * Python-side restriction can be bypassed
+
+3. **`logits_to_keep > 1` is unsupported**
+
+4. **Argmax cannot be compiled and top-k cannot be executed correctly**
+
+5. **`decoder_batch_sizes` breaks for small batches**
+
+   * `block_tables` shape mismatch
+
+6. **The prefill interface has no batch dimension**
+
+7. **int4/int8 quantization silently produces incorrect output**
+
+   * no usable calibration API was available
+
+8. **`output_hidden_states=True` copies every layer output back to the host**
+
+   * can be bypassed by exposing only the required layers
+
+9. **`mark_static_address` requires an undocumented three-argument form**
+
+10. **Compiled `sin` / `cos` become badly inaccurate for large arguments**
+
+    * maximum error observed relative to CPU fp32 was on the order of tens of millions
+    * worked around by doing angle reduction on the host
+
+The most difficult problems were not the restrictions that raised errors.
+
+They were the cases where the runtime **successfully executed and returned numerically wrong results**.
+
+For example, an early stateful-drafter implementation called PAGED attention with `q_len != k_len`. The graph ran without an exception, but the resulting cosine similarity was only about:
+
+```text
+0.57
+```
+
+This made explicit numerical equivalence checks necessary throughout the port.
 
 ---
 
-## 6. 실패로 확인된 것
+## 10. Things that did not help
 
-| 시도 | 결과 |
-|---|---|
-| flash attention | 5–15% **악화** (partition 8192 ≫ 우리 컨텍스트) |
-| 청크 32 / 16 / 8 | 악화 — 호출당 바닥 비용 약 37 ms (가중치 스트리밍) |
-| verify 청크 128 / 256 | 악화 |
-| Append 폭 확대 | 미시도 — 초기 컨텍스트 적재가 P/16 회 호출 (남은 개선점) |
-| `.float()` 제거 | 차이 없음 (초기 주장 철회) |
-| int4 / int8 양자화 | 출력 붕괴 |
+Several optimizations that looked promising either had no effect or made performance worse.
 
----
+| Attempt                  | Result                                                                            |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| Flash attention          | **5–15% slower**; partition size 8192 was much larger than the working context    |
+| Chunk sizes 32 / 16 / 8  | Slower because each invocation still pays roughly the same weight-streaming floor |
+| Verify chunks 128 / 256  | Slower                                                                            |
+| Wider Append graph       | Not yet tested; initial context loading still requires P/16 calls                 |
+| Removing `.float()`      | No measurable difference; earlier claim was incorrect                             |
+| int4 / int8 quantization | Numerical output collapsed                                                        |
 
-## 7. 측정 규율
+One general lesson from these experiments is that GPU-style intuition does not always transfer to this accelerator.
 
-같은 서버의 다른 카드에서 실험을 병행하면 **결과가 오염됩니다.**
-카드는 독립이지만 호스트(워커당 19.5 GiB RSS / 64 GiB 상한, 8코어, flock 직렬 로딩)를
-공유하기 때문입니다. 실제로 그렇게 측정한 humaneval/mbpp 는 verify 가
-63.9 → 225–245 ms 로 튀었습니다.
-
-**측정은 카드 1장, 단독으로.**
+Reducing arithmetic or graph size is not necessarily useful when **weight streaming dominates each invocation**.
 
 ---
 
-## 8. 디렉토리
+## 11. Measurement discipline
 
-| 경로 | 내용 |
-|---|---|
-| [bench/](bench/) | 벤치 하네스 5단계 (`bench2.py` → `bench_sf_paper.py` → `bench_sf_ua.py` → `bench_sf_dual.py` → `bench_sf_slim.py`) |
-| [compile/](compile/) | 그래프 컴파일 (`slim_1_256.py` 가 최종: 청크 17+256 공유 캐시 + 출력 6개) |
-| [generators/](generators/) | 하네스 패치 생성기 — 단계 간 diff 가 여기 담겨 있음 |
-| [checks/](checks/) | 수치 등가 검증 (`d17_check.py`, `tau_diag.py`, `verify_stateful.py` …) |
-| [run/](run/) | 실행/대기 셸 스크립트 |
-| [probes/](probes/) | 탐색용 일회성 프로브 (정리 안 됨, 기록용) |
-| [results/](results/) | 원본 측정 결과 JSON |
-| [docs/OPTIMIZATIONS.md](docs/OPTIMIZATIONS.md) | 최적화 6단계 상세 |
-| [docs/VENDOR_LIMITS.md](docs/VENDOR_LIMITS.md) | 벤더 제약 10가지 |
-| [docs/RESULTS.md](docs/RESULTS.md) | 전체 측정값 + GPU 비교 |
-| [docs/ROPE_ROOT_CAUSE.md](docs/ROPE_ROOT_CAUSE.md) | 긴 컨텍스트 정확도 결함의 원인·수정 |
-| [docs/LONG_CONTEXT_CMR.md](docs/LONG_CONTEXT_CMR.md) | 실제 코퍼스 길이별 tau 붕괴와 CMR (NPU↔GPU 대조) |
-| [docs/HOST_THREAD_STARVATION.md](docs/HOST_THREAD_STARVATION.md) | CMR 오버헤드는 알고리즘이 아니라 호스트 구현이었다 (3.5—3.7 배) |
-| [docs/CMR_TUNING.md](docs/CMR_TUNING.md) | CMR 파라미터는 남의 드래프터 것이었다 — 동적 검색이 DFlash 에서 무의미 (1.67 배) |
+Measurements on this server have to be run with only one active experiment.
 
-## 9. 재현
+Although the NPU cards themselves are independent, they share host resources:
 
-컴파일된 `.rbln` 그래프와 모델 가중치는 저장소에 없습니다 (수 GB).
-`compile/` 의 스크립트로 다시 만들어야 합니다.
+* 8 CPU cores
+* 64 GiB host memory limit
+* approximately 19.5 GiB RSS per worker
+* serialized model loading through `flock`
+
+Running experiments on different cards at the same time caused severe host contention.
+
+For example, contaminated `humaneval` and `mbpp` runs increased verify latency from roughly:
+
+```text
+63.9 ms -> 225–245 ms
+```
+
+For reliable numbers, all measurements in this project therefore use:
+
+```text
+one NPU card
+one experiment
+no concurrent accelerator workload on the server
+```
+
+---
+
+## 12. Repository structure
+
+| Path                                                               | Description                                                                                                                                     |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`bench/`](bench/)                                                 | Benchmark harnesses for each optimization stage: `bench2.py` → `bench_sf_paper.py` → `bench_sf_ua.py` → `bench_sf_dual.py` → `bench_sf_slim.py` |
+| [`compile/`](compile/)                                             | Graph compilation scripts. `slim_1_256.py` contains the final 17-token verify + 256-token prefill shared-cache configuration                    |
+| [`generators/`](generators/)                                       | Harness patch generators; useful for seeing the changes between optimization stages                                                             |
+| [`checks/`](checks/)                                               | Numerical equivalence and debugging checks such as `d17_check.py`, `tau_diag.py`, and `verify_stateful.py`                                      |
+| [`run/`](run/)                                                     | Execution and waiting scripts                                                                                                                   |
+| [`probes/`](probes/)                                               | One-off exploratory experiments; kept mainly as a development record                                                                            |
+| [`results/`](results/)                                             | Raw benchmark JSON files                                                                                                                        |
+| [`docs/OPTIMIZATIONS.md`](docs/OPTIMIZATIONS.md)                   | Detailed description of the optimization steps                                                                                                  |
+| [`docs/VENDOR_LIMITS.md`](docs/VENDOR_LIMITS.md)                   | Runtime/compiler limitations found during the port                                                                                              |
+| [`docs/RESULTS.md`](docs/RESULTS.md)                               | Full benchmark results and GPU comparison                                                                                                       |
+| [`docs/ROPE_ROOT_CAUSE.md`](docs/ROPE_ROOT_CAUSE.md)               | Root cause and fix for the long-context RoPE numerical failure                                                                                  |
+| [`docs/LONG_CONTEXT_CMR.md`](docs/LONG_CONTEXT_CMR.md)             | Long-context tau degradation and CMR comparison between NPU and GPU                                                                             |
+| [`docs/HOST_THREAD_STARVATION.md`](docs/HOST_THREAD_STARVATION.md) | Analysis showing that much of the original CMR overhead came from the host implementation                                                       |
+| [`docs/CMR_TUNING.md`](docs/CMR_TUNING.md)                         | CMR parameter analysis and why dynamic search was ineffective for DFlash                                                                        |
+
+---
+
+## 13. Reproducing the setup
+
+Compiled `.rbln` graphs and model weights are not included in this repository because they are several gigabytes in size.
+
+They need to be rebuilt using the scripts under `compile/`.
 
 ```bash
-# 1) 드래프터 stateful 그래프
+# 1. Build the stateful drafter graphs
 python3 compile/build_stateful.py
 
-# 2) verify 17 + prefill 256 공유 캐시 그래프
+# 2. Build target verify-17 and prefill-256 graphs with a shared KV cache
 CHUNKS=17,256 python3 compile/dual_1_256.py
 
-# 3) 최종 벤치
+# 3. Run the benchmark
 DSET=gsm8k NSAMP=20 MAXNEW=2048 DEV=0 python3 bench/bench_sf_dual.py
 ```
 
-경로는 스크립트 상단 상수(`SRC`, `TGT`, `D`)에 하드코딩돼 있습니다.
-서버 접속 정보는 연구실 내부 문서에 있고 이 저장소에는 **포함하지 않습니다.**
+Several filesystem paths are currently hard-coded near the top of the scripts, including:
+
+```text
+SRC
+TGT
+D
+```
+
+These need to be changed for a different server setup.
+
+Server access information is kept in internal lab documentation and is intentionally not included in this repository.
+
+---
+
+## 14. Takeaways
+
+Porting DFlash to a compiled accelerator exposed a different set of bottlenecks from the ones I initially expected.
+
+The speculative decoding algorithm itself was not the difficult part. Most of the work came from fitting a dynamic decoding loop into a static execution model and separating actual hardware limits from runtime and wrapper restrictions.
+
+The biggest improvements came from:
+
+* keeping KV state on the device,
+* allowing execution to resume at arbitrary cache positions,
+* using different graph shapes for prefill and verification while sharing the same cache,
+* avoiding unnecessary host outputs,
+* removing host-side scheduling and memory overhead,
+* and validating numerical correctness instead of assuming that a successfully executed graph was correct.
+
+After these changes, the target verification path went from **63.8 ms to 38.8 ms**, and the full `gsm8k` decoding round went from **96.5 ms to 59.5 ms**.
+
+At that point, the remaining latency was largely explained by the accelerator's measured weight-streaming bandwidth rather than obvious software overhead.
+
+The project also uncovered several cases where vendor-side checks were stricter than the underlying kernels, as well as numerical failures that produced no runtime error. In practice, understanding those software boundaries was just as important as optimizing the model itself.
